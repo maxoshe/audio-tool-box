@@ -3,6 +3,7 @@ A python module for processing audio.
 
 AudioToolBox provides a user friendly way to process audio in python.
 Each channel object is used to import, process and export a single mono wav file.
+The split_to_mono and join_to_stereo methods can be used to work with stereo files.
 
 Dependencies
 --

@@ -3,6 +3,8 @@ A python module for processing audio.
 
 AudioToolBox provides a user friendly way to process audio in python.
 Each channel object is used to import, process and export a single mono wav file.
+When processing a stereo file, the left and right chanelles will be summed to a single mono channel.
+Another option is to use the provided split_to_mono and join_to_stereo methods to process each channel individualy and then join them.
 
 Dependencies
 --------
@@ -21,17 +23,52 @@ Process a guitar signal using a channel strip::
     guitar.compressor(tresh_db=-20, ratio=4, attack_ms=50, release_ms=100)
     guitar.export('guitar_processed.wav')
 """
-
+import os
 import numpy as np
 import soundfile as sf
 import scipy.signal as dsp
 import scipy.fftpack as fft
 import matplotlib.pyplot as plt
 
+def split_to_mono(path):
+    """
+    Split one stereo wav file to seperate mono .wav files
+        Parameters:
+        --------
+            path: str
+                The path of the input stereo .wav file.
+    """
+    y, fs = sf.read(path)
+    sf.write(os.path.splitext(path)[0] + '_L.wav', y[:, 0], fs)
+    sf.write(os.path.splitext(path)[0] + '_R.wav', y[:, 1], fs)
+    return
+
+def join_to_stereo(L_path, R_path, path):
+    """
+    Join two mono .wav files to one stereo .wav file
+        Parameters:
+        --------
+            L_path: str
+                The path of the input left mono .wav file.
+            R_path: str
+                The path of the input right mono .wav file.
+            path: str
+                path of the output stereo .wav file
+    """
+    y_L, fs = sf.read(L_path)
+    y_R, fs = sf.read(R_path)
+    y = np.column_stack((y_L, y_R))
+    sf.write(path, y, fs)
+    return
+
 class channel:
     def __init__(self, path):
         """
-        Create an audio channel and import a signal from a wav file
+        Create an audio channel and import a signal from a .wav file
+        Sums stereo channels to a single mono channel.
+        To process stereo files use the split_to_mono method,
+        process the left and right channels individualy, 
+        then join them with the join_to_stereo method.
 
             Parameters:
             --------
@@ -41,10 +78,20 @@ class channel:
             Returns:
             --------
                 channel
-                    a channel object that can call a list of DSP methods
+                    a mono channel object that can call a list of DSP methods
 
         """
         self.__y, self.__fs = sf.read(path)
+        if sf.info(path).channels > 1:
+            self.__sum_to_mono()
+        return
+
+    def __sum_to_mono(self):
+        left = self.__y[:, 0]
+        right = self.__y[:, 1]
+        ave = (left + right) / 2
+        del self.__y
+        self.__y = ave
         return
 
     def export(self, path):
