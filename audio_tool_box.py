@@ -5,7 +5,6 @@ import scipy.signal as dsp
 import scipy.fftpack as fft
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-import matplotlib.pyplot as plt
 
 
 def split_to_mono(path: str) -> None:
@@ -101,9 +100,7 @@ class Channel:
         fig.update_yaxes(range=[-1, 1], row=1, col=1)
 
         fig.add_trace(
-            go.Scatter(
-                x=freq[: n // 2], y=10 * np.log10(psd[: n // 2]), name="PSD"
-            ),
+            go.Scatter(x=freq[: n // 2], y=10 * np.log10(psd[: n // 2]), name="PSD"),
             row=2,
             col=1,
         )
@@ -122,9 +119,7 @@ class Channel:
         fig = make_subplots(rows=2, cols=1)
 
         fig.add_trace(
-            go.Scatter(
-                x=w, y=db, name="Amplitude"
-            ),
+            go.Scatter(x=w, y=db, name="Amplitude"),
             row=1,
             col=1,
         )
@@ -134,9 +129,7 @@ class Channel:
         fig.update_yaxes(range=[-150, 0], row=1, col=1)
 
         fig.add_trace(
-            go.Scatter(
-                x=w, y=np.angle(h), name="Phase"
-            ),
+            go.Scatter(x=w, y=np.angle(h), name="Phase"),
             row=2,
             col=1,
         )
@@ -304,18 +297,33 @@ class Channel:
     ) -> None:
         t = np.arange(0, len(x) / self.fs, 1 / self.fs)
         y_db = 20 * np.log10(np.maximum(np.abs(self.y), 1e-5))
-        plt.figure()
-        plt.subplot(2, 1, 1)
-        plt.plot(t, x, linewidth=0.5)
-        plt.plot(t, t * 0 + thresh, linewidth=1)
-        plt.plot(t, attenuation, linewidth=0.5)
-        plt.ylim([-40, 0])
-        plt.xlim([0, len(self.y) / self.fs])
-        plt.subplot(2, 1, 2)
-        plt.plot(t, y_db, linewidth=0.5)
-        plt.ylim([-40, 0])
-        plt.xlim([0, len(self.y) / self.fs])
-        plt.show()
+        fig = make_subplots(rows=2, cols=1)
+
+        fig.add_trace(
+            go.Scatter(x=t, y=x, name="Input signal"),
+            row=1,
+            col=1,
+        )
+        fig.add_trace(
+            go.Scatter(x=t, y=t * 0 + thresh, name="Threshold"),
+            row=1,
+            col=1,
+        )
+        fig.add_trace(
+            go.Scatter(x=t, y=attenuation, name="Attenuation"),
+            row=1,
+            col=1,
+        )
+        fig.update_yaxes(range=[-40, 0], row=1, col=1)
+
+        fig.add_trace(
+            go.Scatter(x=t, y=y_db, name="Output signal"),
+            row=2,
+            col=1,
+        )
+        fig.update_yaxes(range=[-40, 0], row=2, col=1)
+
+        fig.show()
 
     def compressor(
         self,
