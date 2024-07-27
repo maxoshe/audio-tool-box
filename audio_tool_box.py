@@ -3,6 +3,8 @@ import numpy as np
 import soundfile as sf
 import scipy.signal as dsp
 import scipy.fftpack as fft
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 
 
@@ -92,22 +94,26 @@ class Channel:
         t = np.arange(0, n / self.fs, 1 / self.fs)
         psd = np.power(abs(fft.fft(self.y)), 2) / (self.fs * n)
         freq = fft.fftfreq(n) * self.fs
-        plt.figure()
-        plt.suptitle(title)
-        plt.subplot(2, 1, 1)
-        plt.plot(t, self.y, linewidth=0.5)
-        plt.xlim([0, len(self.y) / self.fs])
-        plt.ylim([-1, 1])
-        plt.subplot(2, 1, 2)
-        plt.semilogx(
-            freq[: n // 2], 10 * np.log10(psd[: n // 2]), "tab:gray", linewidth=0.5
+
+        fig = make_subplots(rows=2, cols=1)
+
+        fig.add_trace(go.Scatter(x=t, y=self.y, name="Waveform"), row=1, col=1)
+        fig.update_yaxes(range=[-1, 1], row=1, col=1)
+
+        fig.add_trace(
+            go.Scatter(
+                x=freq[: n // 2], y=10 * np.log10(psd[: n // 2]), name="PSD"
+            ),
+            row=2,
+            col=1,
         )
-        f = [20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000]
-        ticks = [20, 50, 100, 200, 500, "1k", "2k", "5k", "10k", "20k"]
-        plt.xticks(f, ticks)
-        plt.xlim([20, 20000])
-        plt.ylim([-140, 0])
-        plt.show()
+        fig.update_xaxes(
+            type="log", range=[np.log10(20), np.log10(20000)], row=2, col=1
+        )
+        fig.update_yaxes(range=[-150, 0], row=2, col=1)
+
+        fig.update_layout(title=title)
+        fig.show()
 
     def _bode(self, sos: np.ndarray, title: str) -> None:
         w, h = dsp.filter_design.sosfreqz(sos, fs=self.fs)
