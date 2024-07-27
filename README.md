@@ -1,19 +1,15 @@
 # AudioToolBox
 A python library for processing audio signals.
 
-AudioToolBox provides a user friendly way to process audio in python.
+audio_tool_box provides a user friendly way to process audio in python.
 Each channel object is used to import, process and export a single mono wav file.
 The split_to_mono and join_to_stereo methods can be used to work with stereo files.
-
-Dependencies
---
-numpy, scipy, soundfile, matplotlib
 
 Example
 --
 Process a guitar signal using a channel strip
 
-    import AudioToolBox
+    import audio_tool_box
     guitar = AudioToolBox.channel('guitar.wav')
     guitar.highpass(fc=100, db_per_octave=6)
     guitar.eq_band(fc=2000, gain_db=3, q=1)
