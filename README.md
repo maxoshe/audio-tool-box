@@ -1,4 +1,4 @@
-# AudioToolBox
+# audio_tool_box
 A python library for processing audio signals.
 
 audio_tool_box provides a user friendly way to process audio in python.
@@ -10,7 +10,7 @@ Example
 Process a guitar signal using a channel strip
 
     import audio_tool_box
-    guitar = AudioToolBox.channel('guitar.wav')
+    guitar = audio_tool_box.Channel('guitar.wav')
     guitar.highpass(fc=100, db_per_octave=6)
     guitar.eq_band(fc=2000, gain_db=3, q=1)
     guitar.lowpass(fc=10000, db_per_octave=12)
