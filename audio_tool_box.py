@@ -118,23 +118,35 @@ class Channel:
     def _bode(self, sos: np.ndarray, title: str) -> None:
         w, h = dsp.filter_design.sosfreqz(sos, fs=self.fs)
         db = 20 * np.log10(np.maximum(np.abs(h), 1e-5))
-        plt.figure()
-        plt.suptitle(title)
-        plt.subplot(2, 1, 1)
-        plt.semilogx(w, db, "k", linewidth=1)
-        f = [20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000]
-        ticks = [20, 50, 100, 200, 500, "1k", "2k", "5k", "10k", "20k"]
-        plt.xticks(f, ticks)
-        plt.xlim([20, 20000])
-        plt.subplot(2, 1, 2)
-        plt.semilogx(w, np.angle(h), "k", linewidth=1)
-        plt.xticks(f, ticks)
-        plt.xlim([20, 20000])
-        plt.yticks(
-            [-np.pi, -np.pi / 2, 0, np.pi / 2, np.pi],
-            [r"$-\pi$", r"$-\pi/2$", 0, r"$\pi/2$", r"$\pi$"],
+
+        fig = make_subplots(rows=2, cols=1)
+
+        fig.add_trace(
+            go.Scatter(
+                x=w, y=db, name="Amplitude"
+            ),
+            row=1,
+            col=1,
         )
-        plt.show()
+        fig.update_xaxes(
+            type="log", range=[np.log10(20), np.log10(20000)], row=1, col=1
+        )
+        fig.update_yaxes(range=[-150, 0], row=1, col=1)
+
+        fig.add_trace(
+            go.Scatter(
+                x=w, y=np.angle(h), name="Phase"
+            ),
+            row=2,
+            col=1,
+        )
+        fig.update_xaxes(
+            type="log", range=[np.log10(20), np.log10(20000)], row=2, col=1
+        )
+        fig.update_yaxes(range=[-np.pi, np.pi], row=2, col=1)
+
+        fig.update_layout(title=title)
+        fig.show()
 
     def gain(self, gain_db: float) -> None:
         """
