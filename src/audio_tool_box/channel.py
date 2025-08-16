@@ -1,41 +1,9 @@
-import os
 import numpy as np
 import soundfile as sf
 import scipy.signal as dsp
 import scipy.fftpack as fft
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-
-
-def split_to_mono(path: str) -> None:
-    """
-    Split one stereo wav file to separate mono .wav files
-        Parameters:
-        --------
-            path:
-                The path of the input stereo .wav file.
-    """
-    y, fs = sf.read(path)
-    sf.write(f"{os.path.splitext(path)[0]}_L.wav", y[:, 0], fs)
-    sf.write(f"{os.path.splitext(path)[0]}_R.wav", y[:, 1], fs)
-
-
-def join_to_stereo(L_path: str, R_path: str, path: str) -> None:
-    """
-    Join two mono .wav files to one stereo .wav file
-        Parameters:
-        --------
-            L_path:
-                The path of the input left mono .wav file.
-            R_path:
-                The path of the input right mono .wav file.
-            path:
-                path of the output stereo .wav file
-    """
-    y_L, fs = sf.read(L_path)
-    y_R, fs = sf.read(R_path)
-    y = np.column_stack((y_L, y_R))
-    sf.write(path, y, fs)
 
 
 class Channel:
