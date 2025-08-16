@@ -1,2 +1,2 @@
-def convert_db_to_factor(dbfs: float) -> float:
-    return 10 ** (dbfs / 20)
+def convert_db_to_factor(db: float) -> float:
+    return 10 ** (db / 20)
