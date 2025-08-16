@@ -8,14 +8,12 @@ authors = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "cffi==1.16.0",
     "numpy==2.0.1",
-    "packaging==24.1",
     "plotly==5.23.0",
-    "pycparser==2.22",
+    "pydantic>=2.11.7",
+    "pytest>=8.4.1",
     "scipy==1.13.1",
     "soundfile==0.12.1",
-    "tenacity==8.5.0",
 ]
 
 [project.scripts]
@@ -24,3 +22,6 @@ audio-tool-box = "audio_tool_box:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
