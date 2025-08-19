@@ -3,8 +3,6 @@ from typing import Optional, Union
 import numpy as np
 import scipy.signal as dsp
 import scipy.fftpack as fft
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
 from audio_tool_box.audio_data import AudioData
 from audio_tool_box.plots import get_bode_plot, get_signal_plot, get_dynamics_plot
 
