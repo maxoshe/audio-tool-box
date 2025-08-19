@@ -41,6 +41,12 @@ class AudioData(BaseModel):
             return 1
         return self.data.shape[CHANNEL_AXIS]
 
+    def get_sample_period_s(self) -> float:
+        return 1 / self.sample_rate
+
+    def get_duration_s(self) -> float:
+        return self.get_sample_period_s() * self.get_number_of_samples()
+
     def split_to_mono(self) -> List["AudioData"]:
         if self.is_mono():
             raise AudioDataError("Can't split mono audio")
