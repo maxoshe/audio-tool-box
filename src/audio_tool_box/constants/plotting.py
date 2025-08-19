@@ -1,0 +1,47 @@
+import numpy as np
+
+LOGARITHMIC_AXES_TYPE = "log"
+WELCH_SEGMENT_SIZE_DEFAULT = 10000
+
+FREQUENCY_PLOT_TICKS = {
+    20: "20",
+    30: "30",
+    40: "40",
+    50: "50",
+    60: "60",
+    80: "80",
+    100: "100",
+    200: "200",
+    300: "300",
+    400: "400",
+    500: "500",
+    600: "600",
+    800: "800",
+    1000: "1k",
+    2000: "2k",
+    3000: "3k",
+    4000: "4k",
+    5000: "5k",
+    6000: "6k",
+    8000: "8k",
+    10000: "10k",
+    20000: "20k",
+}
+
+PLOT_RANGE_X_FREQUENCY = [np.log10(20), np.log10(20000)]
+PLOT_RANGE_Y_WAVEFORM = [-1, 1]
+PLOT_RANGE_Y_PSD = [-100, 0]
+PLOT_RANGE_Y_BODE_AMP = [-20, 20]
+PLOT_RANGE_Y_BODE_PHASE = [-180, 180]
+PLOT_RANGE_Y_DYNAMICS = [-40, 0]
+
+PLOT_ROWS = 2
+PLOT_COLUMNS = 1
+
+COLUMN = 1
+ROW_WAVEFORM = 1
+ROW_PSD = 2
+ROW_BODE_AMP = 1
+ROW_BODE_PHASE = 2
+ROW_DYNAMICS_PROCESSING = 1
+ROW_DYNAMICS_RESULT = 2

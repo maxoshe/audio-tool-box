@@ -1,11 +1,12 @@
 from os import PathLike
-from typing import Union
+from typing import Optional, Union
 import numpy as np
 import scipy.signal as dsp
 import scipy.fftpack as fft
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from audio_tool_box.audio_data import AudioData
+from audio_tool_box.plots import get_bode_plot, get_signal_plot, get_dynamics_plot
 
 
 class Channel:
@@ -30,72 +31,11 @@ class Channel:
         """
         self.audio_data.write_to_file(path)
 
-    def plot_signal(self, title: str = "") -> None:
+    def plot_signal(self, title: Optional[str] = None) -> None:
         """
-        Plots the waveform and spectrum of the current state of the signal.
-
-            Parameters:
-            --------
-                title:
-                    Title of the plot, default is an empty string
+        Plots the waveform and power spectral density of the signal.
         """
-        n = self.audio_data.get_number_of_samples()
-        t = np.arange(
-            0, n / self.audio_data.sample_rate, 1 / self.audio_data.sample_rate
-        )
-        psd = np.power(abs(fft.fft(self.audio_data.data)), 2) / (
-            self.audio_data.sample_rate * n
-        )
-        freq = fft.fftfreq(n) * self.audio_data.sample_rate
-
-        fig = make_subplots(rows=2, cols=1)
-
-        fig.add_trace(
-            go.Scatter(x=t, y=self.audio_data.data, name="Waveform"), row=1, col=1
-        )
-        fig.update_yaxes(range=[-1, 1], row=1, col=1)
-
-        fig.add_trace(
-            go.Scatter(x=freq[: n // 2], y=10 * np.log10(psd[: n // 2]), name="PSD"),
-            row=2,
-            col=1,
-        )
-        fig.update_xaxes(
-            type="log", range=[np.log10(20), np.log10(20000)], row=2, col=1
-        )
-        fig.update_yaxes(range=[-150, 0], row=2, col=1)
-
-        fig.update_layout(title=title)
-        fig.show()
-
-    def _bode(self, sos: np.ndarray, title: str) -> None:
-        w, h = dsp.filter_design.sosfreqz(sos, fs=self.audio_data.sample_rate)
-        db = 20 * np.log10(np.maximum(np.abs(h), 1e-5))
-
-        fig = make_subplots(rows=2, cols=1)
-
-        fig.add_trace(
-            go.Scatter(x=w, y=db, name="Amplitude"),
-            row=1,
-            col=1,
-        )
-        fig.update_xaxes(
-            type="log", range=[np.log10(20), np.log10(20000)], row=1, col=1
-        )
-        fig.update_yaxes(range=[-150, 0], row=1, col=1)
-
-        fig.add_trace(
-            go.Scatter(x=w, y=np.angle(h), name="Phase"),
-            row=2,
-            col=1,
-        )
-        fig.update_xaxes(
-            type="log", range=[np.log10(20), np.log10(20000)], row=2, col=1
-        )
-        fig.update_yaxes(range=[-np.pi, np.pi], row=2, col=1)
-
-        fig.update_layout(title=title)
-        fig.show()
+        get_signal_plot(audio_data=self.audio_data, title=title).show()
 
     def gain(self, gain_db: float) -> None:
         """
@@ -156,7 +96,7 @@ class Channel:
         )
         self.audio_data.data = dsp.sosfilt(sos, self.audio_data.data)
         if bode:
-            self._bode(sos, "Lowpass")
+            get_bode_plot(self.audio_data, sos, "Low Pass Filter").show()
 
     def highpass(self, fc: int, db_per_octave: int = 12, bode: bool = False) -> None:
         """
@@ -178,7 +118,7 @@ class Channel:
         )
         self.audio_data.data = dsp.sosfilt(sos, self.audio_data.data)
         if bode:
-            self._bode(sos, "Highpass")
+            get_bode_plot(self.audio_data, sos, "High Pass Filter").show()
 
     def eq_band(
         self, fc: int, gain_db: float, q: float = 1, bode: bool = False
@@ -210,7 +150,7 @@ class Channel:
         sos = dsp.tf2sos([b0, b1, b2], [a0, a1, a2])
         self.audio_data.data = dsp.sosfilt(sos, self.audio_data.data)
         if bode:
-            self._bode(sos, "EQ band")
+            get_bode_plot(self.audio_data, sos, "EQ Band").show()
 
     def noise_reduction(self, thresh_db: float = -50, reduction_db: float = -1) -> None:
         """
@@ -252,41 +192,6 @@ class Channel:
                 smoothed[n] = alpha_r * smoothed[n - 1] + (1 - alpha_r) * value
         return np.delete(smoothed, 0)
 
-    def _plot_dynamics(
-        self, x: np.ndarray, attenuation: np.ndarray, thresh: float
-    ) -> None:
-        t = np.arange(
-            0, len(x) / self.audio_data.sample_rate, 1 / self.audio_data.sample_rate
-        )
-        y_db = 20 * np.log10(np.maximum(np.abs(self.audio_data.data), 1e-5))
-        fig = make_subplots(rows=2, cols=1)
-
-        fig.add_trace(
-            go.Scatter(x=t, y=x, name="Input signal"),
-            row=1,
-            col=1,
-        )
-        fig.add_trace(
-            go.Scatter(x=t, y=t * 0 + thresh, name="Threshold"),
-            row=1,
-            col=1,
-        )
-        fig.add_trace(
-            go.Scatter(x=t, y=attenuation, name="Attenuation"),
-            row=1,
-            col=1,
-        )
-        fig.update_yaxes(range=[-40, 0], row=1, col=1)
-
-        fig.add_trace(
-            go.Scatter(x=t, y=y_db, name="Output signal"),
-            row=2,
-            col=1,
-        )
-        fig.update_yaxes(range=[-40, 0], row=2, col=1)
-
-        fig.show()
-
     def compressor(
         self,
         thresh_db: float = -20,
@@ -313,6 +218,7 @@ class Channel:
                     When True, prints the gain reduction curve over the signal dynamics (default is False)
         """
         original_peak = np.max(self.audio_data.data)
+        pre_data = self.audio_data
         x = 20 * np.log10(np.maximum(np.abs(self.audio_data.data), 1e-5))
         gain = self._gain_computer(x, thresh_db, ratio)
         gain_smooth = self._gain_smoothing(gain, attack_ms, release_ms)
@@ -321,7 +227,7 @@ class Channel:
         compressed_peak = np.max(self.audio_data.data)
         self.audio_data.data *= original_peak / compressed_peak
         if plot:
-            self._plot_dynamics(x, gain_smooth, thresh_db)
+            get_dynamics_plot(pre_data, self.audio_data, gain_smooth, thresh_db).show()
 
     def _zero_padding(self, x: np.ndarray, control: np.ndarray, ms: int) -> None:
         samples = self.audio_data.sample_rate * ms / 1000
@@ -359,6 +265,7 @@ class Channel:
         """
         ratio = 1000
         attack_ms = 10
+        pre_data = self.audio_data
         x = 20 * np.log10(np.maximum(np.abs(self.audio_data.data), 1e-5))
         gain = self._gain_computer(x, thresh_db, ratio)
         x, gain = self._zero_padding(x, gain, attack_ms + lookahead_ms)
@@ -367,7 +274,7 @@ class Channel:
         self.audio_data.data *= linear_gain
         self.normalize(ceiling_db)
         if plot:
-            self._plot_dynamics(x, gain_smooth, thresh_db)
+            get_dynamics_plot(pre_data, self.audio_data, gain_smooth, thresh_db).show()
 
     def soft_clipping(self) -> None:
         """
