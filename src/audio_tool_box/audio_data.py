@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from soundfile import _SoundFileInfo
 from typing import List, Optional
 from os import PathLike
+from math import floor
 
 
 class AudioDataError(Exception): ...
@@ -49,6 +50,9 @@ class AudioData(BaseModel):
 
     def get_peak(self) -> float:
         return np.max(np.abs(self.data))
+
+    def get_nyquist_frequency(self) -> int:
+        return floor(self.sample_rate / 2)
 
     def split_to_mono(self) -> List["AudioData"]:
         if self.is_mono():

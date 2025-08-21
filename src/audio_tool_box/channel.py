@@ -4,12 +4,17 @@ import numpy as np
 import scipy.signal as dsp
 import scipy.fftpack as fft
 from audio_tool_box.audio_data import AudioData
-from audio_tool_box.plots import get_bode_plot, get_signal_plot, get_dynamics_plot
+from audio_tool_box.plots import get_signal_plot, get_dynamics_plot
+from audio_tool_box.processing.filters import (
+    ButterFilterType,
+    apply_butterworth_filter,
+    apply_parametric_band,
+)
 from audio_tool_box.processing.gain import apply_gain, normalize_to_target, apply_fade
 
 
 class Channel:
-    def __init__(self, source: Union[PathLike, AudioData]) -> "Channel":
+    def __init__(self, source: Union[PathLike, AudioData]) -> None:
         """
         Mono channel for processing audio signals.
         Non mono data will be summed to mono.
@@ -57,78 +62,26 @@ class Channel:
     def lowpass(self, fc: int, db_per_octave: int = 12, bode: bool = False) -> None:
         """
         Filters frequencies above the cutoff frequency
-
-            Parameters:
-            --------
-                fc:
-                    Cutoff frequency in Hz, should be between 20Hz and 20000Hz
-                    (or 20Hz to fs/2 for down sampled signals)
-                db_per_octave:
-                    Slope of the filter transition band, must be a multiple of 6 (default is 12)
-                bode:
-                    When True, prints a bode plot of the filter (default is False)
         """
-        order = db_per_octave / 6
-        sos = dsp.butter(
-            order, fc, btype="lowpass", output="sos", fs=self.audio_data.sample_rate
+        self.audio_data = apply_butterworth_filter(
+            self.audio_data, ButterFilterType.LOWPASS, fc, db_per_octave, bode
         )
-        self.audio_data.data = dsp.sosfilt(sos, self.audio_data.data)
-        if bode:
-            get_bode_plot(self.audio_data, sos, "Low Pass Filter").show()
 
     def highpass(self, fc: int, db_per_octave: int = 12, bode: bool = False) -> None:
         """
         Filters frequencies below the cutoff frequency
-
-            Parameters:
-            --------
-                fc:
-                    Cutoff frequency in Hz, should be between 20Hz and 20000Hz
-                    (or 20Hz to fs/2 for down sampled signals)
-                db_per_octave:
-                    Slope of the filter transition band, must be a multiple of 6 (default is 12)
-                bode:
-                    When True, prints a bode plot of the filter (default is False)
         """
-        order = db_per_octave / 6
-        sos = dsp.butter(
-            order, fc, btype="highpass", output="sos", fs=self.audio_data.sample_rate
+        self.audio_data = apply_butterworth_filter(
+            self.audio_data, ButterFilterType.HIGHPASS, fc, db_per_octave, bode
         )
-        self.audio_data.data = dsp.sosfilt(sos, self.audio_data.data)
-        if bode:
-            get_bode_plot(self.audio_data, sos, "High Pass Filter").show()
 
     def eq_band(
         self, fc: int, gain_db: float, q: float = 1, bode: bool = False
     ) -> None:
         """
         Boosts or attenuates frequencies around the cutoff frequency using a a single parametric equalizer band
-
-            Parameters:
-            --------
-                fc:
-                    Cutoff frequency in Hz, should be between 20Hz and 20000Hz
-                    (or 20Hz to fs/2 for down sampled signals)
-                gain_db:
-                    Amount of gain boost(+) or attenuation(-) to be applied in db
-                q:
-                    quality factor of the equalizer band, higher value results in a narrower band (default is 1)
-                bode:
-                    When True, prints a bode plot of the filter (default is False)
         """
-        a = np.power(10, gain_db / 40)
-        wc = fc * 2 * np.pi / self.audio_data.sample_rate
-        alpha = np.sin(wc) / (2 * q)
-        b0 = 1 + alpha * a
-        b1 = -2 * np.cos(wc)
-        b2 = 1 - alpha * a
-        a0 = 1 + alpha / a
-        a1 = -2 * np.cos(wc)
-        a2 = 1 - alpha / a
-        sos = dsp.tf2sos([b0, b1, b2], [a0, a1, a2])
-        self.audio_data.data = dsp.sosfilt(sos, self.audio_data.data)
-        if bode:
-            get_bode_plot(self.audio_data, sos, "EQ Band").show()
+        self.audio_data = apply_parametric_band(self.audio_data, fc, gain_db, q, bode)
 
     def noise_reduction(self, thresh_db: float = -50, reduction_db: float = -1) -> None:
         """
