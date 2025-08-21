@@ -1,7 +1,6 @@
 from os import PathLike
 from typing import Optional, Union
 import numpy as np
-import scipy.signal as dsp
 import scipy.fftpack as fft
 from audio_tool_box.audio_data import AudioData
 from audio_tool_box.plots import get_signal_plot, get_dynamics_plot
