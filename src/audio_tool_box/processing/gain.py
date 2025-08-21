@@ -1,10 +1,7 @@
 from audio_tool_box.audio_data import AudioData
 from audio_tool_box.util import convert_db_to_factor
 import numpy as np
-
-
-MS_TO_S = 1 / 1000
-S_TO_MS = 1000
+from audio_tool_box.constants.math import MS_TO_S
 
 
 class FlatLineError(Exception): ...
