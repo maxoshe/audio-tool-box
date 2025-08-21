@@ -10,6 +10,9 @@ S_TO_MS = 1000
 class FlatLineError(Exception): ...
 
 
+class ClippingError(Exception): ...
+
+
 def apply_gain(audio_data: AudioData, gain_db: float) -> AudioData:
     new_data = audio_data.get_copy()
 
@@ -22,6 +25,9 @@ def apply_gain(audio_data: AudioData, gain_db: float) -> AudioData:
 
 
 def normalize_to_target(audio_data: AudioData, target_db: float) -> AudioData:
+    if target_db > 0:
+        raise ClippingError("the provided gain value will result in a clipped signal")
+
     new_data = audio_data.get_copy()
 
     target = convert_db_to_factor(target_db)
