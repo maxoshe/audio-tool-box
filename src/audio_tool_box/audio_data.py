@@ -47,6 +47,9 @@ class AudioData(BaseModel):
     def get_duration_s(self) -> float:
         return self.get_sample_period_s() * self.get_number_of_samples()
 
+    def get_peak(self) -> float:
+        return np.max(np.abs(self.data))
+
     def split_to_mono(self) -> List["AudioData"]:
         if self.is_mono():
             raise AudioDataError("Can't split mono audio")
@@ -60,6 +63,11 @@ class AudioData(BaseModel):
             raise AudioDataError("Can't sum mono audio")
         return AudioData(
             sample_rate=self.sample_rate, data=np.mean(self.data, axis=CHANNEL_AXIS)
+        )
+
+    def get_copy(self) -> "AudioData":
+        return AudioData(
+            info=self.info, sample_rate=self.sample_rate, data=np.copy(self.data)
         )
 
 

@@ -5,6 +5,7 @@ import scipy.signal as dsp
 import scipy.fftpack as fft
 from audio_tool_box.audio_data import AudioData
 from audio_tool_box.plots import get_bode_plot, get_signal_plot, get_dynamics_plot
+from audio_tool_box.processing.gain import apply_gain, normalize_to_target, apply_fade
 
 
 class Channel:
@@ -38,41 +39,20 @@ class Channel:
     def gain(self, gain_db: float) -> None:
         """
         Adjusts the the signal amplitude by a decibel amount.
-
-            Parameters:
-            --------
-                gain_db:
-                    Amount of gain boost(+) or attenuation(-) to be applied in db
         """
-        factor = np.power(10, gain_db / 20)
-        self.audio_data.data *= factor
+        self.audio_data = apply_gain(self.audio_data, gain_db)
 
     def normalize(self, target_db: float = -0.3) -> None:
         """
         Normalizes the signal to a target dbFS peak value
-
-            Parameters:
-            --------
-                target_db:
-                    Target dbFS peak value
         """
-        target = np.power(10, target_db / 20)
-        peak = np.max(np.abs(self.audio_data.data))
-        factor = target / peak
-        self.audio_data.data *= factor
+        self.audio_data = normalize_to_target(self.audio_data, target_db)
 
-    def fade(self, ms: int) -> None:
+    def fade(self, fade_duration_ms: int = 100) -> None:
         """
         Creates a fade in and a fade out at the start and end of the signal
-
-            Parameters:
-            --------
-                ms:
-                    Length of the fades in milliseconds
         """
-        n = round((ms / 1000) * self.audio_data.sample_rate)
-        self.audio_data.data[:n] = self.audio_data.data[:n] * np.linspace(0, 1, num=n)
-        self.audio_data.data[-n:] = self.audio_data.data[-n:] * np.linspace(1, 0, num=n)
+        self.audio_data = apply_fade(self.audio_data, fade_duration_ms)
 
     def lowpass(self, fc: int, db_per_octave: int = 12, bode: bool = False) -> None:
         """
