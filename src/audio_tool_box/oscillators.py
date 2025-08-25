@@ -53,3 +53,20 @@ def generate_square_wave(
     )
     factor = convert_db_to_factor(amplitude_dbfs)
     return factor * np.sign(sine_wave)
+
+
+def generate_white_noise(
+    sample_rate_hz: int,
+    duration_s: float,
+    amplitude_dbfs: float,
+) -> np.ndarray:
+    _validate_oscillator_params(
+        sample_rate_hz=sample_rate_hz,
+        duration_s=duration_s,
+        frequency=1,
+        amplitude_dbfs=amplitude_dbfs,
+    )
+
+    number_of_samples = int(sample_rate_hz * duration_s)
+    factor = convert_db_to_factor(amplitude_dbfs)
+    return factor * (np.random.rand(number_of_samples) - 0.5) * 2
