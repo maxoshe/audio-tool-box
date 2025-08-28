@@ -23,12 +23,12 @@ class AudioData(BaseModel):
     data: np.ndarray
 
     @classmethod
-    def read_from_file(cls, file_path: PathLike) -> "AudioData":
+    def read_from_file(cls, file_path: PathLike[str]) -> "AudioData":
         info = sf.info(file_path)
         data, sample_rate = sf.read(file_path, always_2d=False)
         return cls(info=info, data=data, sample_rate=sample_rate)
 
-    def write_to_file(self, output_path: PathLike) -> None:
+    def write_to_file(self, output_path: PathLike[str]) -> None:
         sf.write(output_path, self.data, self.sample_rate)
 
     def is_mono(self) -> bool:
