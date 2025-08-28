@@ -32,7 +32,7 @@ class Channel:
             audio_data = audio_data.sum_to_mono()
         self.audio_data = audio_data
 
-    def export(self, output_path: PathLike[str]) -> None:
+    def write(self, output_path: PathLike[str]) -> None:
         """
         Write signal to file
         """
@@ -44,7 +44,7 @@ class Channel:
         """
         get_signal_plot(audio_data=self.audio_data, title=title).show()
 
-    def gain(self, gain_db: float) -> None:
+    def gain(self, gain_db: float = 1) -> None:
         """
         Adjusts the the signal amplitude by a decibel amount.
         """
@@ -68,8 +68,8 @@ class Channel:
 
     def lowpass(
         self,
-        cutoff_frequency: float,
-        db_per_octave: Literal[6, 12, 18, 24],
+        cutoff_frequency: float = 80,
+        db_per_octave: Literal[6, 12, 18, 24] = 6,
         plot_filter_bode: bool = False,
     ) -> None:
         """
@@ -85,8 +85,8 @@ class Channel:
 
     def highpass(
         self,
-        cutoff_frequency: float,
-        db_per_octave: Literal[6, 12, 18, 24],
+        cutoff_frequency: float = 10000,
+        db_per_octave: Literal[6, 12, 18, 24] = 6,
         plot_filter_bode: bool = False,
     ) -> None:
         """
@@ -102,8 +102,8 @@ class Channel:
 
     def eq_band(
         self,
-        center_frequency: float,
-        gain_db: float,
+        center_frequency: float = 800,
+        gain_db: float = -3,
         q_factor: float = 1,
         plot_filter_bode: bool = False,
     ) -> None:

@@ -5,9 +5,9 @@ import numpy as np
 
 
 def apply_spectral_gating(
-    audio_date: AudioData, noise_threshold_db: float = -50, attenuation_db: float = -1
+    audio_data: AudioData, noise_threshold_db: float = -50, attenuation_db: float = -1
 ) -> AudioData:
-    new_data = audio_date.get_copy()
+    new_data = audio_data.get_copy()
 
     noise_threshold = convert_db_to_factor(noise_threshold_db)
     attenuation = convert_db_to_factor(attenuation_db)
