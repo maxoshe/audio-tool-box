@@ -225,7 +225,7 @@ class Channel:
             attack_ms (int, optional): Attack time in milliseconds. Defaults to 15 ms.
             release_ms (int, optional): Release time in milliseconds. Defaults to 50 ms.
             normalize_to_original_peak (bool, optional): If True, scales output to original peak. Defaults to False.
-            plot_compressor_response (bool, optional): If True, plots compression curve. Defaults to False.
+            plot_compressor_response (bool, optional): If True, plots the dynamics of compression, including input signal, threshold, attenuation applied, and resulting output signal. Defaults to False.
 
         Returns:
             Channel: Returns self for chaining.
@@ -245,7 +245,7 @@ class Channel:
     def limiter(
         self,
         thresh_db: float = -10,
-        plot: bool = False,
+        plot_limiter_response: bool = False,
         normalize_to_original_peak: bool = False,
     ) -> "Channel":
         """
@@ -253,7 +253,7 @@ class Channel:
 
         Args:
             thresh_db (float, optional): Maximum allowed signal level in dBFS. Defaults to -10 dB.
-            plot (bool, optional): If True, plots the limiter curve. Defaults to False.
+            plot_limiter_response (bool, optional): If True, plots the limiting process, including input signal, threshold, attenuation applied, and resulting output signal. Defaults to False.
             normalize_to_original_peak (bool, optional): If True, scales output to original peak. Defaults to False.
 
         Returns:
@@ -263,7 +263,7 @@ class Channel:
             audio_data=self.audio_data,
             threshold_db=thresh_db,
             normalize=normalize_to_original_peak,
-            plot=plot,
+            plot=plot_limiter_response,
         )
         return self
 
