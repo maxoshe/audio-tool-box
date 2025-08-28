@@ -1,7 +1,5 @@
 from os import PathLike
 from typing import Optional, Union
-import numpy as np
-import scipy.fftpack as fft
 from audio_tool_box.audio_data import AudioData
 from audio_tool_box.plots import get_signal_plot
 from audio_tool_box.processing.dynamics import (
@@ -15,6 +13,7 @@ from audio_tool_box.processing.filters import (
     apply_parametric_band,
 )
 from audio_tool_box.processing.gain import apply_gain, normalize_to_target, apply_fade
+from audio_tool_box.processing.noise_reduction import apply_spectral_gating
 
 
 class Channel:
@@ -90,20 +89,10 @@ class Channel:
     def noise_reduction(self, thresh_db: float = -50, reduction_db: float = -1) -> None:
         """
         Reduces noise by attenuating frequencies below the dbFS threshold by a decibel amount
-
-            Parameters:
-            --------
-                thresh_db:
-                    Threshold in dbFS, frequencies below this threshold are attenuated (default is -50)
-                reduction_db:
-                    Amount of gain attenuation(-) to be applied in db (default is -1)
         """
-        thresh = np.power(10, thresh_db / 20)
-        factor = np.power(10, reduction_db / 20)
-        signal_fft = fft.fft(self.audio_data.data)
-        n = self.audio_data.get_number_of_samples()
-        signal_fft[abs(fft.fft(self.audio_data.data)) * (2 / n) < thresh] *= factor
-        self.audio_data.data = fft.ifft(signal_fft).real
+        self.audio_data = apply_spectral_gating(
+            self.audio_data, thresh_db, reduction_db
+        )
 
     def compressor(
         self,
