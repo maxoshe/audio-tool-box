@@ -22,7 +22,7 @@ Stereo files can be handled by first splitting them into mono channels using `sp
   - `noise_reduction` (spectral gating)
 - Dynamics
   - `compressor`, `limiter`, `soft_clipping`
-- Plotting tools
+- Plotting tools ([see examples](#plotting))
   - `plot_signal` - generate signal time and frequency plot
   - Dynamic plots - `compressor`, `limiter` can generate attenuation plots
   - Bode plots - `lowpass`, `highpass`, `eq_band` can generate filter bode plots
