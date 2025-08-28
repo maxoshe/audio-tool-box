@@ -1,7 +1,6 @@
 import numpy as np
 from audio_tool_box.audio_data import AudioData
 from audio_tool_box.processing.noise_reduction import apply_spectral_gating
-from audio_tool_box.processing.gain import apply_gain
 from audio_tool_box.oscillators import generate_white_noise
 from scipy.signal import welch
 
