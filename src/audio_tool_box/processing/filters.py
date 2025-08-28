@@ -18,7 +18,7 @@ class ButterFilterType(Enum):
 SECOND_ORDER_SECTIONS = "sos"
 
 
-def db_per_octave_to_filter_order(db_per_octave: Literal[-6, -12, -18, -24]) -> int:
+def db_per_octave_to_filter_order(db_per_octave: Literal[6, 12, 18, 24]) -> int:
     return int(abs(db_per_octave) / 6)
 
 
@@ -26,7 +26,7 @@ def apply_butterworth_filter(
     audio_data: AudioData,
     filter_type: ButterFilterType,
     cutoff_frequency: float,
-    db_per_octave: Literal[-6, -12, -18, -24] = -6,
+    db_per_octave: Literal[6, 12, 18, 24] = 6,
     plot=False,
 ) -> AudioData:
     if not 0 < cutoff_frequency < audio_data.get_nyquist_frequency():

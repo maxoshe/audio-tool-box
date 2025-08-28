@@ -1,5 +1,5 @@
 from os import PathLike
-from typing import Optional, Union
+from typing import Literal, Optional, Union
 from audio_tool_box.audio_data import AudioData
 from audio_tool_box.plots import get_signal_plot
 from audio_tool_box.processing.dynamics import (
@@ -17,7 +17,7 @@ from audio_tool_box.processing.noise_reduction import apply_spectral_gating
 
 
 class Channel:
-    def __init__(self, source: Union[PathLike, AudioData]) -> None:
+    def __init__(self, source: Union[PathLike[str], AudioData]) -> None:
         """
         Mono channel for processing audio signals.
         Non mono data will be summed to mono.
@@ -26,17 +26,17 @@ class Channel:
         if isinstance(source, AudioData):
             audio_data = source
         else:
-            audio_data = AudioData.read_from_file(source)
+            audio_data = AudioData.read_from_file(file_path=source)
 
         if not audio_data.is_mono():
             audio_data = audio_data.sum_to_mono()
         self.audio_data = audio_data
 
-    def export(self, path: PathLike) -> None:
+    def export(self, output_path: PathLike[str]) -> None:
         """
         Write signal to file
         """
-        self.audio_data.write_to_file(path)
+        self.audio_data.write_to_file(output_path=output_path)
 
     def plot_signal(self, title: Optional[str] = None) -> None:
         """
@@ -48,83 +48,125 @@ class Channel:
         """
         Adjusts the the signal amplitude by a decibel amount.
         """
-        self.audio_data = apply_gain(self.audio_data, gain_db)
+        self.audio_data = apply_gain(audio_data=self.audio_data, gain_db=gain_db)
 
     def normalize(self, target_db: float = -0.3) -> None:
         """
         Normalizes the signal to a target dbFS peak value
         """
-        self.audio_data = normalize_to_target(self.audio_data, target_db)
+        self.audio_data = normalize_to_target(
+            audio_data=self.audio_data, target_db=target_db
+        )
 
     def fade(self, fade_duration_ms: int = 100) -> None:
         """
         Creates a fade in and a fade out at the start and end of the signal
         """
-        self.audio_data = apply_fade(self.audio_data, fade_duration_ms)
+        self.audio_data = apply_fade(
+            audio_data=self.audio_data, fade_duration_ms=fade_duration_ms
+        )
 
-    def lowpass(self, fc: int, db_per_octave: int = 12, bode: bool = False) -> None:
+    def lowpass(
+        self,
+        cutoff_frequency: float,
+        db_per_octave: Literal[6, 12, 18, 24],
+        plot_filter_bode: bool = False,
+    ) -> None:
         """
         Filters frequencies above the cutoff frequency
         """
         self.audio_data = apply_butterworth_filter(
-            self.audio_data, ButterFilterType.LOWPASS, fc, db_per_octave, bode
+            audio_data=self.audio_data,
+            filter_type=ButterFilterType.LOWPASS,
+            cutoff_frequency=cutoff_frequency,
+            db_per_octave=db_per_octave,
+            plot=plot_filter_bode,
         )
 
-    def highpass(self, fc: int, db_per_octave: int = 12, bode: bool = False) -> None:
+    def highpass(
+        self,
+        cutoff_frequency: float,
+        db_per_octave: Literal[6, 12, 18, 24],
+        plot_filter_bode: bool = False,
+    ) -> None:
         """
         Filters frequencies below the cutoff frequency
         """
         self.audio_data = apply_butterworth_filter(
-            self.audio_data, ButterFilterType.HIGHPASS, fc, db_per_octave, bode
+            audio_data=self.audio_data,
+            filter_type=ButterFilterType.HIGHPASS,
+            cutoff_frequency=cutoff_frequency,
+            db_per_octave=db_per_octave,
+            plot=plot_filter_bode,
         )
 
     def eq_band(
-        self, fc: int, gain_db: float, q: float = 1, bode: bool = False
+        self,
+        center_frequency: float,
+        gain_db: float,
+        q_factor: float = 1,
+        plot_filter_bode: bool = False,
     ) -> None:
         """
         Boosts or attenuates frequencies around the cutoff frequency using a a single parametric equalizer band
         """
-        self.audio_data = apply_parametric_band(self.audio_data, fc, gain_db, q, bode)
+        self.audio_data = apply_parametric_band(
+            audio_data=self.audio_data,
+            center_frequency=center_frequency,
+            gain_db=gain_db,
+            q_factor=q_factor,
+            plot=plot_filter_bode,
+        )
 
-    def noise_reduction(self, thresh_db: float = -50, reduction_db: float = -1) -> None:
+    def noise_reduction(
+        self, noise_threshold_db: float = -50, attenuation_db: float = -1
+    ) -> None:
         """
         Reduces noise by attenuating frequencies below the dbFS threshold by a decibel amount
         """
         self.audio_data = apply_spectral_gating(
-            self.audio_data, thresh_db, reduction_db
+            audio_data=self.audio_data,
+            noise_threshold_db=noise_threshold_db,
+            attenuation_db=attenuation_db,
         )
 
     def compressor(
         self,
-        thresh_db: float = -20,
-        ratio: int = 2,
+        threshold_db: float = -20,
+        compression_ratio: int = 2,
+        knee_width_db: float = 1,
         attack_ms: int = 15,
         release_ms: int = 50,
-        plot: bool = False,
+        normalize_to_original_peak: bool = False,
+        plot_compressor_response: bool = False,
     ) -> None:
         """
         Compresses the signal by reducing sounds that exceed the dbFS threshold,
         """
         self.audio_data = apply_compressor(
-            self.audio_data,
-            thresh_db,
-            ratio,
+            audio_data=self.audio_data,
+            threshold_db=threshold_db,
+            compression_ratio=compression_ratio,
+            knee_width_db=knee_width_db,
             attack_ms=attack_ms,
             release_ms=release_ms,
-            plot=plot,
+            normalize=normalize_to_original_peak,
+            plot=plot_compressor_response,
         )
 
     def limiter(
         self,
         thresh_db: float = -10,
         plot: bool = False,
+        normalize_to_original_peak: bool = False,
     ) -> None:
         """
         Limits the signal by strongly reducing sounds that exceed the dbFS threshold.
         """
         self.audio_data = apply_limiter(
-            self.audio_data,
-            thresh_db,
+            audio_data=self.audio_data,
+            threshold_db=thresh_db,
+            normalize=normalize_to_original_peak,
             plot=plot,
         )
 
@@ -132,4 +174,4 @@ class Channel:
         """
         Performs soft clipping of the signal by using a cubic nonlinearity
         """
-        self.audio_data = apply_cubic_non_linearity(self.audio_data)
+        self.audio_data = apply_cubic_non_linearity(audio_data=self.audio_data)
