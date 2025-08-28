@@ -3,7 +3,12 @@ from typing import Optional, Union
 import numpy as np
 import scipy.fftpack as fft
 from audio_tool_box.audio_data import AudioData
-from audio_tool_box.plots import get_signal_plot, get_dynamics_plot
+from audio_tool_box.plots import get_signal_plot
+from audio_tool_box.processing.dynamics import (
+    apply_compressor,
+    apply_cubic_non_linearity,
+    apply_limiter,
+)
 from audio_tool_box.processing.filters import (
     ButterFilterType,
     apply_butterworth_filter,
@@ -100,28 +105,6 @@ class Channel:
         signal_fft[abs(fft.fft(self.audio_data.data)) * (2 / n) < thresh] *= factor
         self.audio_data.data = fft.ifft(signal_fft).real
 
-    def _gain_computer(self, x: np.ndarray, thresh_db: float, ratio: int) -> np.ndarray:
-        side_chain = x * 0
-        side_chain[x < thresh_db] = x[x < thresh_db]
-        side_chain[x > thresh_db] = thresh_db + (x[x > thresh_db] - thresh_db) / ratio
-        control_signal = side_chain - x
-        return control_signal
-
-    def _gain_smoothing(
-        self, gain: float, attack_ms: int, release_ms: int
-    ) -> np.ndarray:
-        alpha_a = np.exp(-np.log(9) / (self.audio_data.sample_rate * attack_ms / 1000))
-        alpha_r = np.exp(-np.log(9) / (self.audio_data.sample_rate * release_ms / 1000))
-        smoothed = np.insert(gain, 0, 0)
-        for n, value in enumerate(gain):
-            if n == 0:
-                continue
-            if value <= smoothed[n - 1]:
-                smoothed[n] = alpha_a * smoothed[n - 1] + (1 - alpha_a) * value
-            if value > smoothed[n - 1]:
-                smoothed[n] = alpha_r * smoothed[n - 1] + (1 - alpha_r) * value
-        return np.delete(smoothed, 0)
-
     def compressor(
         self,
         thresh_db: float = -20,
@@ -132,90 +115,32 @@ class Channel:
     ) -> None:
         """
         Compresses the signal by reducing sounds that exceed the dbFS threshold,
-        uses a smoothing algorithm for gradual attack and release.
-
-            Parameters:
-            --------
-                thresh_db:
-                    Threshold in dbFS, sounds above this threshold are attenuated (default is -20)
-                ratio:
-                    Ratio of the gain reduction (default is 2)
-                attack_ms:
-                    Attack time in milliseconds, the time it takes to reach 90% attenuation (default is 15)
-                release_ms:
-                    Release time in milliseconds, the time it takes to reach 10% attenuation (default is 50)
-                plot:
-                    When True, prints the gain reduction curve over the signal dynamics (default is False)
         """
-        original_peak = np.max(self.audio_data.data)
-        pre_data = self.audio_data
-        x = 20 * np.log10(np.maximum(np.abs(self.audio_data.data), 1e-5))
-        gain = self._gain_computer(x, thresh_db, ratio)
-        gain_smooth = self._gain_smoothing(gain, attack_ms, release_ms)
-        linear_gain = np.power(10, gain_smooth / 20)
-        self.audio_data.data *= linear_gain
-        compressed_peak = np.max(self.audio_data.data)
-        self.audio_data.data *= original_peak / compressed_peak
-        if plot:
-            get_dynamics_plot(pre_data, self.audio_data, gain_smooth, thresh_db).show()
-
-    def _zero_padding(self, x: np.ndarray, control: np.ndarray, ms: int) -> None:
-        samples = self.audio_data.sample_rate * ms / 1000
-        pad = np.zeros(int(samples))
-        self.audio_data.data = np.concatenate((pad, self.audio_data.data))
-        x = np.concatenate((pad, x))
-        control = np.concatenate((control, pad))
-        return x, control
+        self.audio_data = apply_compressor(
+            self.audio_data,
+            thresh_db,
+            ratio,
+            attack_ms=attack_ms,
+            release_ms=release_ms,
+            plot=plot,
+        )
 
     def limiter(
         self,
         thresh_db: float = -10,
-        release_ms: int = 250,
-        ceiling_db: float = 0,
-        lookahead_ms: int = 5,
         plot: bool = False,
     ) -> None:
         """
         Limits the signal by strongly reducing sounds that exceed the dbFS threshold.
-        Uses a smoothing algorithm and a lookahead to make sure the transient peaks are reduced with minimal noise.
-        Normalizes the signal to the dbFS ceiling
-
-            Parameters:
-            --------
-                thresh_db:
-                    Threshold in dbFS, sounds above this threshold are attenuated (default is -20)
-                release_ms:
-                    Release time in milliseconds, the time it takes to reach 10% attenuation (default is 50)
-                ceiling_db:
-                    The dbFS ceiling used to normalize the output signal
-                lookahead_ms:
-                    Used to shift the gain reduction curve ahead of the signal in milliseconds (default is 5)
-                plot:
-                    When True, prints the gain reduction curve over the signal dynamics (default is False)
         """
-        ratio = 1000
-        attack_ms = 10
-        pre_data = self.audio_data
-        x = 20 * np.log10(np.maximum(np.abs(self.audio_data.data), 1e-5))
-        gain = self._gain_computer(x, thresh_db, ratio)
-        x, gain = self._zero_padding(x, gain, attack_ms + lookahead_ms)
-        gain_smooth = self._gain_smoothing(gain, attack_ms, release_ms)
-        linear_gain = np.power(10, gain_smooth / 20)
-        self.audio_data.data *= linear_gain
-        self.normalize(ceiling_db)
-        if plot:
-            get_dynamics_plot(pre_data, self.audio_data, gain_smooth, thresh_db).show()
+        self.audio_data = apply_limiter(
+            self.audio_data,
+            thresh_db,
+            plot=plot,
+        )
 
     def soft_clipping(self) -> None:
         """
         Performs soft clipping of the signal by using a cubic nonlinearity
         """
-        peak_db = 20 * np.log10(np.max(np.abs(self.audio_data.data)))
-        for i, x in enumerate(self.audio_data.data):
-            if x > 1:
-                self.audio_data.data[i] = 2 / 3
-            elif x < -1:
-                self.audio_data.data[i] = -2 / 3
-            else:
-                self.audio_data.data[i] = x - np.power(x, 3) / 3
-        self.normalize(peak_db)
+        self.audio_data = apply_cubic_non_linearity(self.audio_data)
