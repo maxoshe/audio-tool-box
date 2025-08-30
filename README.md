@@ -33,7 +33,7 @@ Stereo files can be handled by first splitting them into mono channels using `sp
 ## Installation
 
 ```bash
-pip install git+https://github.com/maxoshe/audio-toolset.git
+pip install audio-toolset
 ```
 
 ## Examples
