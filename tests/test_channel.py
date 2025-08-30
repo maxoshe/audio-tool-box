@@ -1,6 +1,6 @@
 import numpy as np
-from audio_tool_box.audio_data import AudioData
-from audio_tool_box.channel import Channel
+from audio_toolset.audio_data import AudioData
+from audio_toolset.channel import Channel
 from pathlib import Path
 
 

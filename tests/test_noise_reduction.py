@@ -1,10 +1,10 @@
 import numpy as np
-from audio_tool_box.audio_data import AudioData
-from audio_tool_box.processing.noise_reduction import apply_spectral_gating
-from audio_tool_box.oscillators import generate_white_noise
+from audio_toolset.audio_data import AudioData
+from audio_toolset.processing.noise_reduction import apply_spectral_gating
+from audio_toolset.oscillators import generate_white_noise
 from scipy.signal import welch
 
-from audio_tool_box.constants.frequencies import TEST_TONE_1000HZ
+from audio_toolset.constants.frequencies import TEST_TONE_1000HZ
 
 
 def test_spectral_gating(test_tone: AudioData):

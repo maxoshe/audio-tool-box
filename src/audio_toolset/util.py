@@ -1,6 +1,6 @@
 import numpy as np
 
-from audio_tool_box.constants.math import LOG_FLOOR
+from audio_toolset.constants.math import LOG_FLOOR
 
 
 def convert_db_to_factor(db: np.ndarray | float) -> np.ndarray | float:
