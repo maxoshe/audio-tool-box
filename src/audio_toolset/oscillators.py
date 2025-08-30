@@ -1,5 +1,5 @@
 import numpy as np
-from audio_tool_box.util import convert_db_to_factor
+from audio_toolset.util import convert_db_to_factor
 
 
 class OscillatorError(Exception): ...

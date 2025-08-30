@@ -1,6 +1,6 @@
 from pathlib import Path
-from audio_tool_box.audio_data import AudioData, join_to_stereo
-from audio_tool_box.constants.frequencies import FS_44100HZ
+from audio_toolset.audio_data import AudioData, join_to_stereo
+from audio_toolset.constants.frequencies import FS_44100HZ
 from tests.conftest import TEST_SIGNAL_DURATION_S
 import numpy as np
 

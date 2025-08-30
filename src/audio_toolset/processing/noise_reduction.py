@@ -1,5 +1,5 @@
-from audio_tool_box.audio_data import AudioData
-from audio_tool_box.util import convert_db_to_factor
+from audio_toolset.audio_data import AudioData
+from audio_toolset.util import convert_db_to_factor
 from scipy.fftpack import fft, ifft
 import numpy as np
 

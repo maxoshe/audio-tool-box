@@ -1,6 +1,6 @@
-from audio_tool_box.audio_data import AudioData
-from audio_tool_box.processing.filters import apply_butterworth_filter, ButterFilterType
-from audio_tool_box.util import convert_power_to_db
+from audio_toolset.audio_data import AudioData
+from audio_toolset.processing.filters import apply_butterworth_filter, ButterFilterType
+from audio_toolset.util import convert_power_to_db
 from scipy.signal import welch
 import numpy as np
 from scipy.stats import linregress

@@ -1,5 +1,5 @@
-from audio_tool_box.audio_data import AudioData
-from audio_tool_box.processing.dynamics import (
+from audio_toolset.audio_data import AudioData
+from audio_toolset.processing.dynamics import (
     apply_compressor,
     apply_limiter,
     apply_cubic_non_linearity,

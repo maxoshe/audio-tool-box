@@ -1,6 +1,6 @@
 import pytest
 import math
-from audio_tool_box.util import (
+from audio_toolset.util import (
     convert_db_to_factor,
     convert_power_to_db,
     convert_linear_to_db,

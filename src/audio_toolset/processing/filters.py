@@ -1,9 +1,9 @@
 from typing import Literal
-from audio_tool_box.audio_data import AudioData
+from audio_toolset.audio_data import AudioData
 from scipy.signal import butter, sosfilt, tf2sos
 from enum import Enum
-from audio_tool_box.constants.math import PI
-from audio_tool_box.plots import get_bode_plot
+from audio_toolset.constants.math import PI
+from audio_toolset.plots import get_bode_plot
 import numpy as np
 
 

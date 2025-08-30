@@ -4,8 +4,8 @@ import numpy as np
 from scipy import signal
 from plotly.subplots import make_subplots
 from plotly.graph_objects import Scatter, Figure
-from audio_tool_box.audio_data import AudioData
-from audio_tool_box.constants.plotting import (
+from audio_toolset.audio_data import AudioData
+from audio_toolset.constants.plotting import (
     COLUMN,
     FREQUENCY_PLOT_TICKS,
     LOGARITHMIC_AXES_TYPE,
@@ -25,7 +25,7 @@ from audio_tool_box.constants.plotting import (
     ROW_WAVEFORM,
     WELCH_SEGMENT_SIZE_DEFAULT,
 )
-from audio_tool_box.util import (
+from audio_toolset.util import (
     convert_linear_to_db,
     convert_power_to_db,
 )

@@ -1,19 +1,19 @@
 from os import PathLike
 from typing import Literal, Optional, Union
-from audio_tool_box.audio_data import AudioData
-from audio_tool_box.plots import get_signal_plot
-from audio_tool_box.processing.dynamics import (
+from audio_toolset.audio_data import AudioData
+from audio_toolset.plots import get_signal_plot
+from audio_toolset.processing.dynamics import (
     apply_compressor,
     apply_cubic_non_linearity,
     apply_limiter,
 )
-from audio_tool_box.processing.filters import (
+from audio_toolset.processing.filters import (
     ButterFilterType,
     apply_butterworth_filter,
     apply_parametric_band,
 )
-from audio_tool_box.processing.gain import apply_gain, normalize_to_target, apply_fade
-from audio_tool_box.processing.noise_reduction import apply_spectral_gating
+from audio_toolset.processing.gain import apply_gain, normalize_to_target, apply_fade
+from audio_toolset.processing.noise_reduction import apply_spectral_gating
 
 
 class Channel:
@@ -22,7 +22,7 @@ class Channel:
         Initialize a mono audio channel for processing.
 
         If the provided audio is not mono, it will be summed to mono.
-        For stereo processing, use `split_to_mono` and `join_to_stereo` from `audio_tool_box.audio_data`.
+        For stereo processing, use `split_to_mono` and `join_to_stereo` from `audio_toolset.audio_data`.
 
         Args:
             source (Union[PathLike[str], AudioData]): Path to an audio file or an AudioData object.

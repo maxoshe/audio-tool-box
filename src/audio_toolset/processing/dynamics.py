@@ -1,7 +1,7 @@
-from audio_tool_box.plots import get_dynamics_plot
-from audio_tool_box.util import convert_linear_to_db, convert_db_to_factor
-from audio_tool_box.audio_data import AudioData
-from audio_tool_box.processing.gain import normalize_to_target
+from audio_toolset.plots import get_dynamics_plot
+from audio_toolset.util import convert_linear_to_db, convert_db_to_factor
+from audio_toolset.audio_data import AudioData
+from audio_toolset.processing.gain import normalize_to_target
 import numpy as np
 from pydantic import BaseModel, Field
 

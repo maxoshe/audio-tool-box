@@ -1,5 +1,5 @@
-from audio_tool_box.audio_data import AudioData
-from audio_tool_box.processing.gain import (
+from audio_toolset.audio_data import AudioData
+from audio_toolset.processing.gain import (
     apply_gain,
     normalize_to_target,
     apply_fade,
@@ -9,7 +9,7 @@ from audio_tool_box.processing.gain import (
 import numpy as np
 
 import pytest
-from audio_tool_box.util import convert_db_to_factor
+from audio_toolset.util import convert_db_to_factor
 
 
 TOLERANCE = 1e-3
