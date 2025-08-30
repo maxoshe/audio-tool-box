@@ -1,8 +1,11 @@
 # Audio Toolset
 
+[![CI Workflow status](https://github.com/maxoshe/audio-toolset/actions/workflows/ci.yml/badge.svg)](https://github.com/maxoshe/audio-toolset/actions/workflows/ci.yml)
+[![CD Workflow status](https://github.com/maxoshe/audio-toolset/actions/workflows/cd.yml/badge.svg)](https://github.com/maxoshe/audio-toolset/actions/workflows/cd.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/maxoshe/audio-toolset)](https://github.com/maxoshe/audio-toolset/releases)
+[![PyPI - Version](https://img.shields.io/pypi/v/audio-toolset)](https://pypi.org/project/audio-toolset/)
+[![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Fmaxoshe%2Faudio-toolset%2Frefs%2Fheads%2Fmain%2Fpyproject.toml)](https://github.com/maxoshe/audio-toolset/blob/main/pyproject.toml)
 
-![CI Workflow status](https://github.com/maxoshe/audio-toolset/actions/workflows/ci.yml/badge.svg)
-![GitHub top language](https://img.shields.io/github/languages/top/maxoshe/audio-toolset)
 
 
 A Python library for **processing audio signals**.
