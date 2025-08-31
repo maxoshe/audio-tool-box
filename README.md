@@ -10,7 +10,7 @@
 
 A Python library for **processing audio signals**.
 
-`audio_toolset` provides an intuitive and flexible way to process audio files in Python. Each `Channel` object handles a single **mono audio file**, allowing you to apply filters, EQ, dynamics processing, gain adjustments, noise reduction, and more.
+`audio_toolset` provides an intuitive and flexible way to process audio files in Python. Each `Channel` object handles a single **mono audio file**, allowing you to apply filters, EQ, dynamic processing, gain adjustments, noise reduction, and more.
 
 > [!TIP]
 > **Stereo files** can be handled by first splitting them into mono channels using `split_to_mono` and then recombining them with `join_to_stereo`. [see example](#working-with-stereo-files)
