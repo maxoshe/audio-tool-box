@@ -14,6 +14,78 @@ A Python library for **processing audio signals**.
 
 Stereo files can be handled by first splitting them into mono channels using `split_to_mono` and then recombining them with `join_to_stereo`.
 
+## Installation
+
+```bash
+pip install audio-toolset
+```
+
+## Examples
+
+### Quickstart
+
+```python
+from audio_toolset.channel import Channel
+
+track = Channel("my_audio.wav")
+
+track.lowpass(cutoff_frequency=12000)  # Remove harsh high frequencies
+track.highpass(cutoff_frequency=80)  # Remove low-end rumble
+track.normalize(target_db=-1)  # Peak normalize
+
+track.write("my_audio_processed.wav")
+
+```
+
+### Process multiple files
+This is very handy when you need to apply the same processing to multiple files, for example a directory with sound effects.
+
+```python
+import pathlib
+from audio_toolset.channel import Channel
+
+input_dir = pathlib.Path("input_audio")
+output_dir = pathlib.Path("cleaned_audio")
+output_dir.mkdir(exist_ok=True)
+
+for wav_file in input_dir.glob("*.wav"):
+    track = Channel(wav_file)
+
+    track.fade(fade_duration_ms=10)  # Remove start/end pops if present
+    track.lowpass(cutoff_frequency=12000)  # Remove harsh high frequencies
+    track.highpass(cutoff_frequency=80)  # Remove low-end rumble
+    track.normalize(target_db=-1)  # Normalize
+
+    track.write(output_dir / wav_file.name)
+
+```
+
+### Working with stereo files
+```python
+from audio_toolset.audio_data import AudioData, join_to_stereo
+from audio_toolset.channel import Channel
+
+# Load stereo audio file
+stereo_data = AudioData.read_from_file("my_audio.wav")
+
+# Split stereo into left and right channels
+left_data, right_data = stereo_data.split_to_mono()
+left_channel = Channel(left_data)
+right_channel = Channel(right_data)
+
+# Process each channel
+for track in [left_channel, right_channel]:
+    track.lowpass(cutoff_frequency=12000)  # Remove harsh highs
+    track.highpass(cutoff_frequency=80)  # Remove low-end rumble
+    track.normalize(target_db=-1)  # Peak normalize
+
+# Combine channels back to stereo and save
+join_to_stereo(left_channel.audio_data, right_channel.audio_data).write_to_file(
+    "my_audio_processed.wav"
+)
+
+```
+
 ## Features
 
 - High level [`Channel`](https://github.com/maxoshe/audio-toolset/blob/main/src/audio_toolset/channel.py) object for simple user interface
@@ -29,34 +101,6 @@ Stereo files can be handled by first splitting them into mono channels using `sp
   - `plot_signal` - generate signal time and frequency plot
   - Dynamic plots - `compressor`, `limiter` can generate attenuation plots
   - Bode plots - `lowpass`, `highpass`, `eq_band` can generate filter bode plots
-
-## Installation
-
-```bash
-pip install audio-toolset
-```
-
-## Examples
-
-### Process with a channel strip
-
-```python
-from audio_toolset.channel import Channel
-
-guitar = Channel("guitar.wav")
-guitar.highpass(cutoff_frequency=100, db_per_octave=6)
-guitar.eq_band(center_frequency=2000, gain_db=3, q_factor=1)
-guitar.lowpass(cutoff_frequency=10000, db_per_octave=12)
-guitar.normalize(target_db=-1)
-guitar.compressor(threshold_db=-20, compression_ratio=4, attack_ms=50, release_ms=100)
-guitar.write("guitar_processed.wav")
-```
-
-### Process with a chained channel strip
-
-```python
-speech = Channel("speech.wav").highpass(cutoff_frequency=100).lowpass(cutoff_frequency=300)
-```
 
 ## Plotting
 
