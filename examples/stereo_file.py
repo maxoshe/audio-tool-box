@@ -16,5 +16,6 @@ for track in [left_channel, right_channel]:
     track.normalize(target_db=-1)  # Peak normalize
 
 # Combine channels back to stereo and save
-stereo_track = join_to_stereo(left_channel=left_channel, right_channel=right_channel)
-stereo_track.write_to_file("my_audio_processed.wav")
+join_to_stereo(left_channel.audio_data, right_channel.audio_data).write_to_file(
+    "my_audio_processed.wav"
+)
