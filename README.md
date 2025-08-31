@@ -32,7 +32,7 @@ track = Channel("my_audio.wav")
 
 track.lowpass(cutoff_frequency=12000)  # Remove harsh high frequencies
 track.highpass(cutoff_frequency=80)  # Remove low-end rumble
-track.normalize(target_db=-1)  # Peak normalize
+track.normalize(target_db=-1)  # Normalize
 
 track.write("my_audio_processed.wav")
 
@@ -78,7 +78,7 @@ right_channel = Channel(right_data)
 for track in [left_channel, right_channel]:
     track.lowpass(cutoff_frequency=12000)  # Remove harsh highs
     track.highpass(cutoff_frequency=80)  # Remove low-end rumble
-    track.normalize(target_db=-1)  # Peak normalize
+    track.normalize(target_db=-1)  # Normalize
 
 # Combine channels back to stereo and save
 join_to_stereo(left_channel.audio_data, right_channel.audio_data).write_to_file(
