@@ -1,8 +1,6 @@
 import click
 from audio_toolset.channel import Channel
-from audio_toolset.cli.decorators import get_click_decorators_from_method
-
-pass_channel = click.make_pass_decorator(Channel, ensure=True)
+from audio_toolset.cli import decorators
 
 
 @click.group(chain=True)
@@ -13,15 +11,15 @@ def audio_toolset_cli(context: click.Context, source):
 
 
 @audio_toolset_cli.command()
-@pass_channel
-@get_click_decorators_from_method(Channel.lowpass)
+@decorators.pass_channel
+@decorators.click_audio_toolset_options(Channel.lowpass)
 def lowpass(channel: Channel, **kwargs):
     channel.lowpass(**kwargs)
 
 
 @audio_toolset_cli.command()
-@pass_channel
-@get_click_decorators_from_method(Channel.write)
+@decorators.pass_channel
+@decorators.click_audio_toolset_options(Channel.write)
 def write(channel: Channel, **kwargs):
     channel.write(**kwargs)
 
