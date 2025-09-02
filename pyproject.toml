@@ -6,6 +6,7 @@ readme = "README.md"
 authors = [{ name = "moshe-stanylov", email = "maxoshe@gmail.com" }]
 requires-python = ">=3.10, <3.13"
 dependencies = [
+    "click>=8.2.1",
     "numpy==2.0.1",
     "plotly==5.23.0",
     "pydantic>=2.11.7",
@@ -14,7 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
-audio-toolset = "audio_toolset:main"
+audio-toolset = "audio_toolset.cli.main:audio_toolset_cli"
 
 [build-system]
 requires = ["hatchling"]
