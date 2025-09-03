@@ -1,5 +1,6 @@
 from os import PathLike
-from typing import Literal, Optional, Union
+from typing import Literal
+
 from audio_toolset.audio_data import AudioData
 from audio_toolset.plots import get_signal_plot
 from audio_toolset.processing.dynamics import (
@@ -12,20 +13,22 @@ from audio_toolset.processing.filters import (
     apply_butterworth_filter,
     apply_parametric_band,
 )
-from audio_toolset.processing.gain import apply_gain, normalize_to_target, apply_fade
+from audio_toolset.processing.gain import apply_fade, apply_gain, normalize_to_target
 from audio_toolset.processing.noise_reduction import apply_spectral_gating
 
 
 class Channel:
-    def __init__(self, source: Union[PathLike[str], AudioData]) -> None:
+    def __init__(self, source: PathLike[str] | AudioData) -> None:
         """
         Initialize a mono audio channel for processing.
 
         If the provided audio is not mono, it will be summed to mono.
-        For stereo processing, use `split_to_mono` and `join_to_stereo` from `audio_toolset.audio_data`.
+        For stereo processing, use `split_to_mono` and `join_to_stereo` from \
+            `audio_toolset.audio_data`.
 
         Args:
-            source (Union[PathLike[str], AudioData]): Path to an audio file or an AudioData object.
+            source (Union[PathLike[str], AudioData]): Path to an audio file \
+                or an AudioData object.
         """
         if isinstance(source, AudioData):
             audio_data = source
@@ -49,12 +52,13 @@ class Channel:
         self.audio_data.write_to_file(output_path=output_path)
         return self
 
-    def plot_signal(self, title: Optional[str] = None) -> "Channel":
+    def plot_signal(self, title: str | None = None) -> "Channel":
         """
         Plot the waveform and power spectral density of the audio signal.
 
         Args:
-            title (Optional[str], optional): Title of the plot. Defaults to path of file when None.
+            title (Optional[str], optional): Title of the plot. \
+                Defaults to path of file when None.
 
         Returns:
             Channel: Returns self for method chaining.
@@ -95,7 +99,8 @@ class Channel:
         Apply a linear fade-in at the start and fade-out at the end of the signal.
 
         Args:
-            fade_duration_ms (int, optional): Duration of fade-in and fade-out in milliseconds. Defaults to 100 ms.
+            fade_duration_ms (int, optional): Duration of fade-in and fade-out in \
+                milliseconds. Defaults to 100 ms.
 
         Returns:
             Channel: Returns self for chaining.
@@ -115,9 +120,12 @@ class Channel:
         Apply a lowpass Butterworth filter to remove frequencies above the cutoff.
 
         Args:
-            cutoff_frequency (float, optional): Cutoff frequency in Hz. Defaults to 10000 Hz.
-            db_per_octave (Literal[6, 12, 18, 24], optional): Filter slope. Defaults to 6 dB/octave.
-            plot_filter_bode (bool, optional): If True, plots the filter response. Defaults to False.
+            cutoff_frequency (float, optional): Cutoff frequency in Hz. \
+                Defaults to 10000 Hz.
+            db_per_octave (Literal[6, 12, 18, 24], optional): Filter slope. \
+                Defaults to 6 dB/octave.
+            plot_filter_bode (bool, optional): If True, plots the filter response. \
+                Defaults to False.
 
         Returns:
             Channel: Returns self for chaining.
@@ -141,9 +149,12 @@ class Channel:
         Apply a highpass Butterworth filter to remove frequencies below the cutoff.
 
         Args:
-            cutoff_frequency (float, optional): Cutoff frequency in Hz. Defaults to 80 Hz.
-            db_per_octave (Literal[6, 12, 18, 24], optional): Filter slope. Defaults to 6 dB/octave.
-            plot_filter_bode (bool, optional): If True, plots the filter response. Defaults to False.
+            cutoff_frequency (float, optional): Cutoff frequency in Hz. \
+                Defaults to 80 Hz.
+            db_per_octave (Literal[6, 12, 18, 24], optional): Filter slope. \
+                Defaults to 6 dB/octave.
+            plot_filter_bode (bool, optional): If True, plots the filter response. \
+                Defaults to False.
 
         Returns:
             Channel: Returns self for chaining.
@@ -168,10 +179,14 @@ class Channel:
         Apply a single parametric EQ band to boost or attenuate frequencies.
 
         Args:
-            center_frequency (float, optional): Center frequency of the EQ band in Hz. Defaults to 800 Hz.
-            gain_db (float, optional): Gain in dB to apply. Positive boosts, negative attenuates. Defaults to -3 dB.
-            q_factor (float, optional): Quality factor controlling bandwidth. Defaults to 1.
-            plot_filter_bode (bool, optional): If True, plots the filter response. Defaults to False.
+            center_frequency (float, optional): Center frequency of the EQ band in Hz. \
+                Defaults to 800 Hz.
+            gain_db (float, optional): Gain in dB to apply. Positive boosts, \
+                negative attenuates. Defaults to -3 dB.
+            q_factor (float, optional): Quality factor controlling bandwidth. \
+                Defaults to 1.
+            plot_filter_bode (bool, optional): If True, plots the filter response. \
+                Defaults to False.
 
         Returns:
             Channel: Returns self for chaining.
@@ -192,8 +207,10 @@ class Channel:
         Reduce background noise by attenuating low-level signals below a threshold.
 
         Args:
-            noise_threshold_db (float, optional): Threshold below which signals are attenuated in dBFS. Defaults to -50 dB.
-            attenuation_db (float, optional): Amount of attenuation applied to noise in dB. Defaults to -1 dB.
+            noise_threshold_db (float, optional): Threshold below which signals are \
+                attenuated in dBFS. Defaults to -50 dB.
+            attenuation_db (float, optional): Amount of attenuation applied to noise \
+                in dB. Defaults to -1 dB.
 
         Returns:
             Channel: Returns self for chaining.
@@ -219,13 +236,19 @@ class Channel:
         Apply dynamic range compression to reduce the volume of loud sounds.
 
         Args:
-            threshold_db (float, optional): Level above which compression occurs in dBFS. Defaults to -20 dB.
-            compression_ratio (int, optional): Ratio of input to output above threshold. Defaults to 2.
-            knee_width_db (float, optional): Smoothness of compression around threshold in dB. Defaults to 1 dB.
+            threshold_db (float, optional): Level above which compression occurs \
+                in dBFS. Defaults to -20 dB.
+            compression_ratio (int, optional): Ratio of input to output above \
+                threshold. Defaults to 2.
+            knee_width_db (float, optional): Smoothness of compression around \
+                threshold in dB. Defaults to 1 dB.
             attack_ms (int, optional): Attack time in milliseconds. Defaults to 15 ms.
             release_ms (int, optional): Release time in milliseconds. Defaults to 50 ms.
-            normalize_to_original_peak (bool, optional): If True, scales output to original peak. Defaults to False.
-            plot_compressor_response (bool, optional): If True, plots the dynamics of compression, including input signal, threshold, attenuation applied, and resulting output signal. Defaults to False.
+            normalize_to_original_peak (bool, optional): If True, scales output to \
+                original peak. Defaults to False.
+            plot_compressor_response (bool, optional): If True, plots the dynamics of \
+                compression, including input signal, threshold, attenuation applied, \
+                    and resulting output signal. Defaults to False.
 
         Returns:
             Channel: Returns self for chaining.
@@ -252,9 +275,13 @@ class Channel:
         Apply a limiter to strictly prevent the signal from exceeding a threshold.
 
         Args:
-            thresh_db (float, optional): Maximum allowed signal level in dBFS. Defaults to -10 dB.
-            plot_limiter_response (bool, optional): If True, plots the limiting process, including input signal, threshold, attenuation applied, and resulting output signal. Defaults to False.
-            normalize_to_original_peak (bool, optional): If True, scales output to original peak. Defaults to False.
+            thresh_db (float, optional): Maximum allowed signal level in dBFS. \
+                Defaults to -10 dB.
+            plot_limiter_response (bool, optional): If True, plots the limiting \
+                process, including input signal, threshold, attenuation applied, \
+                    and resulting output signal. Defaults to False.
+            normalize_to_original_peak (bool, optional): If True, scales output to \
+                original peak. Defaults to False.
 
         Returns:
             Channel: Returns self for chaining.

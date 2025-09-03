@@ -1,8 +1,10 @@
 from pathlib import Path
+
+import numpy as np
+
 from audio_toolset.audio_data import AudioData, join_to_stereo
 from audio_toolset.constants.frequencies import FS_44100HZ
 from tests.conftest import TEST_SIGNAL_DURATION_S
-import numpy as np
 
 
 def test_audio_data_write_to_file(tmp_path: Path, test_tone: AudioData) -> None:

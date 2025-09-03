@@ -1,9 +1,11 @@
-import pytest
 import math
+
+import pytest
+
 from audio_toolset.util import (
     convert_db_to_factor,
-    convert_power_to_db,
     convert_linear_to_db,
+    convert_power_to_db,
 )
 
 TOLERANCE = 1e-3

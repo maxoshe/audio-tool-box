@@ -1,16 +1,15 @@
+import numpy as np
+import pytest
+
 from audio_toolset.audio_data import AudioData
 from audio_toolset.processing.gain import (
+    ClippingError,
+    FlatLineError,
+    apply_fade,
     apply_gain,
     normalize_to_target,
-    apply_fade,
-    FlatLineError,
-    ClippingError,
 )
-import numpy as np
-
-import pytest
 from audio_toolset.util import convert_db_to_factor
-
 
 TOLERANCE = 1e-3
 

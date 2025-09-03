@@ -1,8 +1,8 @@
 from audio_toolset.audio_data import AudioData
 from audio_toolset.processing.dynamics import (
     apply_compressor,
-    apply_limiter,
     apply_cubic_non_linearity,
+    apply_limiter,
 )
 
 

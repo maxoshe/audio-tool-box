@@ -1,9 +1,11 @@
 from enum import Enum
-from typing import Optional
+
 import numpy as np
-from scipy import signal
+import plotly.io as pio
+from plotly.graph_objects import Figure, Scatter
 from plotly.subplots import make_subplots
-from plotly.graph_objects import Scatter, Figure
+from scipy import signal
+
 from audio_toolset.audio_data import AudioData
 from audio_toolset.constants.plotting import (
     COLUMN,
@@ -29,7 +31,6 @@ from audio_toolset.util import (
     convert_linear_to_db,
     convert_power_to_db,
 )
-import plotly.io as pio
 
 pio.templates.default = "plotly_dark"
 
@@ -43,7 +44,7 @@ class PlotType(Enum):
 def _get_plot_title(
     audio_data: AudioData,
     plot_type: PlotType,
-    title: Optional[str] = None,
+    title: str | None = None,
 ) -> str:
     if title is not None:
         return title
@@ -64,7 +65,7 @@ def _apply_frequency_style_to_xaxes(figure: Figure, row: int, column: int) -> No
     )
 
 
-def get_signal_plot(audio_data: AudioData, title: Optional[str] = None) -> Figure:
+def get_signal_plot(audio_data: AudioData, title: str | None = None) -> Figure:
     t = np.arange(0, audio_data.get_duration_s(), audio_data.get_sample_period_s())
     frequencies, power_spectral_density = signal.welch(
         audio_data.data,
