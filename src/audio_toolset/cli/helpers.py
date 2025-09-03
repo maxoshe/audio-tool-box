@@ -1,11 +1,11 @@
 import inspect
 from collections.abc import Callable
 from os import PathLike
+from types import UnionType
 from typing import (
     Any,
     Literal,
     TypeVar,
-    Union,
     get_args,
     get_origin,
 )
@@ -27,7 +27,7 @@ def _parameter_is_optional(parameter: inspect.Parameter) -> bool:
     parameter_type = _get_parameter_type(parameter)
     parameter_args = get_args(parameter_type)
     return (
-        get_origin(parameter_type) is Union
+        get_origin(parameter_type) is UnionType
         and len(parameter_args) == 2
         and type(None) in parameter_args
     )
