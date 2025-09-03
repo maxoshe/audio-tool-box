@@ -1,5 +1,7 @@
 from os import PathLike
+
 import click
+
 from audio_toolset.channel import Channel
 from audio_toolset.cli import decorators
 from audio_toolset.cli.structs import ContextObject

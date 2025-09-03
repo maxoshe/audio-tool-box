@@ -1,25 +1,23 @@
 import inspect
+from collections.abc import Callable
 from os import PathLike
 from typing import (
     Any,
-    Callable,
-    List,
     Literal,
-    Type,
     TypeVar,
     Union,
-    get_origin,
     get_args,
+    get_origin,
 )
-import click
 
+import click
 
 PARAMETERS_TO_IGNORE = ["self"]
 
 F = TypeVar("F", bound=Callable[..., Any])
 
 
-def _get_parameter_type(parameter: inspect.Parameter) -> Type:
+def _get_parameter_type(parameter: inspect.Parameter) -> type:
     if parameter.annotation is inspect.Parameter.empty:
         return str
     return parameter.annotation
@@ -35,7 +33,7 @@ def _parameter_is_optional(parameter: inspect.Parameter) -> bool:
     )
 
 
-def _unwrap_type_from_optional_parameter(parameter: inspect.Parameter) -> Type:
+def _unwrap_type_from_optional_parameter(parameter: inspect.Parameter) -> type:
     parameter_type = _get_parameter_type(parameter)
     types = [arg for arg in get_args(parameter_type) if arg is not type(None)]
     if len(types) == 1:
@@ -78,7 +76,7 @@ def _get_click_option(parameter: inspect.Parameter) -> Callable[[F], F]:
     return click.option(option_name, type=parameter_type, default=parameter.default)
 
 
-def get_click_decorators_from_method(method: Callable) -> List[Callable[[F], F]]:
+def get_click_decorators_from_method(method: Callable) -> list[Callable[[F], F]]:
     decorators = []
     for name, parameter in inspect.signature(method).parameters.items():
         if name in PARAMETERS_TO_IGNORE:

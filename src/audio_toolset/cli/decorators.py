@@ -1,8 +1,9 @@
-from typing import Callable
+from collections.abc import Callable
+
 import click
 
+from audio_toolset.cli.helpers import F, get_click_decorators_from_method
 from audio_toolset.cli.structs import ContextObject
-from audio_toolset.cli.helpers import get_click_decorators_from_method, F
 
 pass_context_object = click.make_pass_decorator(ContextObject, ensure=True)
 
