@@ -1,4 +1,5 @@
 import pytest
+from click.testing import CliRunner
 
 from audio_toolset.audio_data import AudioData
 from audio_toolset.constants.frequencies import FS_44100HZ, TEST_TONE_1000HZ
@@ -31,3 +32,8 @@ def white_noise() -> AudioData:
             amplitude_dbfs=TEST_SIGNAL_AMPLITUDE_DBFS,
         ),
     )
+
+
+@pytest.fixture
+def runner():
+    return CliRunner()
