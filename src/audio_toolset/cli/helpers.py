@@ -1,6 +1,16 @@
 import inspect
 from os import PathLike
-from typing import Any, Callable, List, Literal, Type, TypeVar, get_origin, get_args
+from typing import (
+    Any,
+    Callable,
+    List,
+    Literal,
+    Type,
+    TypeVar,
+    Union,
+    get_origin,
+    get_args,
+)
 import click
 
 
@@ -13,6 +23,24 @@ def _get_parameter_type(parameter: inspect.Parameter) -> Type:
     if parameter.annotation is inspect.Parameter.empty:
         return str
     return parameter.annotation
+
+
+def _parameter_is_optional(parameter: inspect.Parameter) -> bool:
+    parameter_type = _get_parameter_type(parameter)
+    parameter_args = get_args(parameter_type)
+    return (
+        get_origin(parameter_type) is Union
+        and len(parameter_args) == 2
+        and type(None) in parameter_args
+    )
+
+
+def _unwrap_type_from_optional_parameter(parameter: inspect.Parameter) -> Type:
+    parameter_type = _get_parameter_type(parameter)
+    types = [arg for arg in get_args(parameter_type) if arg is not type(None)]
+    if len(types) == 1:
+        return types[0]
+    raise Exception(f"Failed unwrapping type from {parameter_type}")
 
 
 def _format_as_cli_option(parameter_name: str) -> str:
@@ -37,6 +65,13 @@ def _get_click_option(parameter: inspect.Parameter) -> Callable[[F], F]:
         return click.option(
             option_name,
             type=click.Path(),
+            default=parameter.default,
+        )
+
+    if _parameter_is_optional(parameter):
+        return click.option(
+            option_name,
+            type=_unwrap_type_from_optional_parameter(parameter),
             default=parameter.default,
         )
 
