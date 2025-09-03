@@ -1,9 +1,10 @@
-from typing import Callable
+import inspect
+from collections.abc import Callable
 
 import pytest
-from audio_toolset.cli.helpers import get_click_decorators_from_method
+
 from audio_toolset.channel import Channel
-import inspect
+from audio_toolset.cli.helpers import get_click_decorators_from_method
 
 
 @pytest.mark.parametrize(
