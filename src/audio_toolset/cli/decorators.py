@@ -1,11 +1,10 @@
 from typing import Callable
 import click
 
-from audio_toolset.channel import Channel
+from audio_toolset.cli.structs import ContextObject
 from audio_toolset.cli.helpers import get_click_decorators_from_method, F
 
-
-pass_channel = click.make_pass_decorator(Channel, ensure=True)
+pass_context_object = click.make_pass_decorator(ContextObject, ensure=True)
 
 
 def click_audio_toolset_options(method: Callable) -> Callable[[F], F]:

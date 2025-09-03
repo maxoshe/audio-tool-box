@@ -2,6 +2,7 @@ from os import PathLike
 import click
 from audio_toolset.channel import Channel
 from audio_toolset.cli import decorators
+from audio_toolset.cli.structs import ContextObject
 
 
 @click.group(chain=True)
@@ -11,93 +12,160 @@ from audio_toolset.cli import decorators
     required=True,
     help="Path to an audio file",
 )
+@click.option(
+    "--debug/--no-debug",
+    default=False,
+    help="Show full tracebacks on error",
+)
 @click.pass_context
-def audio_toolset_cli(context: click.Context, source: PathLike[str]) -> None:
-    context.obj = Channel(source=source)
+def audio_toolset_cli(
+    context: click.Context, source: PathLike[str], debug: bool
+) -> None:
+    context.obj = ContextObject(channel=Channel(source), debug=debug)
 
 
 @audio_toolset_cli.command()
-@decorators.pass_channel
+@decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.write)
-def write(channel: Channel, **kwargs) -> None:
-    channel.write(**kwargs)
+def write(obj: ContextObject, **kwargs) -> None:
+    try:
+        obj.channel.write(**kwargs)
+    except Exception as e:
+        if obj.debug:
+            raise
+        click.echo(f"write failed: {e}")
 
 
 @audio_toolset_cli.command()
-@decorators.pass_channel
+@decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.plot_signal)
-def plot_signal(channel: Channel, **kwargs) -> None:
-    channel.plot_signal(**kwargs)
+def plot_signal(obj: ContextObject, **kwargs) -> None:
+    try:
+        obj.channel.plot_signal(**kwargs)
+    except Exception as e:
+        if obj.debug:
+            raise
+        click.echo(f"plot_signal failed: {e}")
 
 
 @audio_toolset_cli.command()
-@decorators.pass_channel
+@decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.gain)
-def gain(channel: Channel, **kwargs) -> None:
-    channel.gain(**kwargs)
+def gain(obj: ContextObject, **kwargs) -> None:
+    try:
+        obj.channel.gain(**kwargs)
+    except Exception as e:
+        if obj.debug:
+            raise
+        click.echo(f"gain failed: {e}")
 
 
 @audio_toolset_cli.command()
-@decorators.pass_channel
+@decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.normalize)
-def normalize(channel: Channel, **kwargs) -> None:
-    channel.normalize(**kwargs)
+def normalize(obj: ContextObject, **kwargs) -> None:
+    try:
+        obj.channel.normalize(**kwargs)
+    except Exception as e:
+        if obj.debug:
+            raise
+        click.echo(f"normalize failed: {e}")
 
 
 @audio_toolset_cli.command()
-@decorators.pass_channel
+@decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.fade)
-def fade(channel: Channel, **kwargs) -> None:
-    channel.fade(**kwargs)
+def fade(obj: ContextObject, **kwargs) -> None:
+    try:
+        obj.channel.fade(**kwargs)
+    except Exception as e:
+        if obj.debug:
+            raise
+        click.echo(f"fade failed: {e}")
 
 
 @audio_toolset_cli.command()
-@decorators.pass_channel
+@decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.lowpass)
-def lowpass(channel: Channel, **kwargs) -> None:
-    channel.lowpass(**kwargs)
+def lowpass(obj: ContextObject, **kwargs) -> None:
+    try:
+        obj.channel.lowpass(**kwargs)
+    except Exception as e:
+        if obj.debug:
+            raise
+        click.echo(f"lowpass failed: {e}")
 
 
 @audio_toolset_cli.command()
-@decorators.pass_channel
+@decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.highpass)
-def highpass(channel: Channel, **kwargs) -> None:
-    channel.highpass(**kwargs)
+def highpass(obj: ContextObject, **kwargs) -> None:
+    try:
+        obj.channel.highpass(**kwargs)
+    except Exception as e:
+        if obj.debug:
+            raise
+        click.echo(f"highpass failed: {e}")
 
 
 @audio_toolset_cli.command()
-@decorators.pass_channel
+@decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.eq_band)
-def eq_band(channel: Channel, **kwargs) -> None:
-    channel.eq_band(**kwargs)
+def eq_band(obj: ContextObject, **kwargs) -> None:
+    try:
+        obj.channel.eq_band(**kwargs)
+    except Exception as e:
+        if obj.debug:
+            raise
+        click.echo(f"eq_band failed: {e}")
 
 
 @audio_toolset_cli.command()
-@decorators.pass_channel
+@decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.noise_reduction)
-def noise_reduction(channel: Channel, **kwargs) -> None:
-    channel.noise_reduction(**kwargs)
+def noise_reduction(obj: ContextObject, **kwargs) -> None:
+    try:
+        obj.channel.noise_reduction(**kwargs)
+    except Exception as e:
+        if obj.debug:
+            raise
+        click.echo(f"noise_reduction failed: {e}")
 
 
 @audio_toolset_cli.command()
-@decorators.pass_channel
+@decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.compressor)
-def compressor(channel: Channel, **kwargs) -> None:
-    channel.compressor(**kwargs)
+def compressor(obj: ContextObject, **kwargs) -> None:
+    try:
+        obj.channel.compressor(**kwargs)
+    except Exception as e:
+        if obj.debug:
+            raise
+        click.echo(f"compressor failed: {e}")
 
 
 @audio_toolset_cli.command()
-@decorators.pass_channel
+@decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.limiter)
-def limiter(channel: Channel, **kwargs) -> None:
-    channel.limiter(**kwargs)
+def limiter(obj: ContextObject, **kwargs) -> None:
+    try:
+        obj.channel.limiter(**kwargs)
+    except Exception as e:
+        if obj.debug:
+            raise
+        click.echo(f"limiter failed: {e}")
 
 
 @audio_toolset_cli.command()
-@decorators.pass_channel
+@decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.soft_clipping)
-def soft_clipping(channel: Channel, **kwargs) -> None:
-    channel.soft_clipping(**kwargs)
+def soft_clipping(obj: ContextObject, **kwargs) -> None:
+    try:
+        obj.channel.soft_clipping(**kwargs)
+    except Exception as e:
+        if obj.debug:
+            raise
+        click.echo(f"soft_clipping failed: {e}")
 
 
 if __name__ == "__main__":
