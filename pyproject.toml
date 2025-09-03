@@ -3,9 +3,7 @@ name = "audio-toolset"
 version = "0.1.1"
 description = "Tools for processing audio signals"
 readme = "README.md"
-authors = [
-    { name = "moshe-stanylov", email = "maxoshe@gmail.com" }
-]
+authors = [{ name = "moshe-stanylov", email = "maxoshe@gmail.com" }]
 requires-python = ">=3.10, <3.13"
 dependencies = [
     "numpy==2.0.1",
@@ -23,10 +21,17 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = { "" = "src" }
 
 [dependency-groups]
-dev = [
-    "pytest>=8.4.1",
-    "ruff>=0.12.9",
+dev = ["pytest>=8.4.1", "ruff>=0.12.9"]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "UP",
+    "B",
+    "SIM",
+    "I",
 ]

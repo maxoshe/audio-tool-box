@@ -1,7 +1,8 @@
-from audio_toolset.audio_data import AudioData
-from audio_toolset.util import convert_db_to_factor
 import numpy as np
+
+from audio_toolset.audio_data import AudioData
 from audio_toolset.constants.math import MS_TO_S
+from audio_toolset.util import convert_db_to_factor
 
 
 class FlatLineError(Exception): ...

@@ -1,10 +1,12 @@
-from typing import Literal
-from audio_toolset.audio_data import AudioData
-from scipy.signal import butter, sosfilt, tf2sos
 from enum import Enum
+from typing import Literal
+
+import numpy as np
+from scipy.signal import butter, sosfilt, tf2sos
+
+from audio_toolset.audio_data import AudioData
 from audio_toolset.constants.math import PI
 from audio_toolset.plots import get_bode_plot
-import numpy as np
 
 
 class FilterError(Exception): ...
@@ -31,7 +33,8 @@ def apply_butterworth_filter(
 ) -> AudioData:
     if not 0 < cutoff_frequency < audio_data.get_nyquist_frequency():
         raise FilterError(
-            f"Cutoff frequency {cutoff_frequency} Hz is out of signal range (0 - {audio_data.get_nyquist_frequency()} Hz)"
+            f"Cutoff frequency {cutoff_frequency} Hz is out of signal range \
+                (0 - {audio_data.get_nyquist_frequency()} Hz)"
         )
 
     new_data = audio_data.get_copy()
@@ -72,7 +75,8 @@ def apply_parametric_band(
 ) -> AudioData:
     if not 0 < center_frequency < audio_data.get_nyquist_frequency():
         raise FilterError(
-            f"Center frequency {center_frequency} Hz is out of signal range (0 - {audio_data.get_nyquist_frequency()} Hz)"
+            f"Center frequency {center_frequency} Hz is out of signal range \
+                (0 - {audio_data.get_nyquist_frequency()} Hz)"
         )
 
     new_data = audio_data.get_copy()

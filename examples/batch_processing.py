@@ -1,4 +1,5 @@
 import pathlib
+
 from audio_toolset.channel import Channel
 
 input_dir = pathlib.Path("input_audio")

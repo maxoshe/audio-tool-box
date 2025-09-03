@@ -1,8 +1,8 @@
-from audio_toolset.oscillators import generate_sine_wave, generate_white_noise
-
 import pytest
+
 from audio_toolset.audio_data import AudioData
 from audio_toolset.constants.frequencies import FS_44100HZ, TEST_TONE_1000HZ
+from audio_toolset.oscillators import generate_sine_wave, generate_white_noise
 
 TEST_SIGNAL_DURATION_S = 10
 TEST_SIGNAL_AMPLITUDE_DBFS = -3.0

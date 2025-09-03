@@ -1,10 +1,10 @@
+from math import floor
+from os import PathLike
+
 import numpy as np
 import soundfile as sf
 from pydantic import BaseModel
 from soundfile import _SoundFileInfo
-from typing import List, Optional
-from os import PathLike
-from math import floor
 
 
 class AudioDataError(Exception): ...
@@ -18,7 +18,7 @@ CHANNEL_AXIS = 1
 
 class AudioData(BaseModel):
     model_config = {"arbitrary_types_allowed": True}
-    info: Optional[_SoundFileInfo] = None
+    info: _SoundFileInfo | None = None
     sample_rate: int
     data: np.ndarray
 
@@ -54,7 +54,7 @@ class AudioData(BaseModel):
     def get_nyquist_frequency(self) -> int:
         return floor(self.sample_rate / 2)
 
-    def split_to_mono(self) -> List["AudioData"]:
+    def split_to_mono(self) -> list["AudioData"]:
         if self.is_mono():
             raise AudioDataError("Can't split mono audio")
         return [

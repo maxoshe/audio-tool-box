@@ -1,9 +1,10 @@
-from audio_toolset.plots import get_dynamics_plot
-from audio_toolset.util import convert_linear_to_db, convert_db_to_factor
-from audio_toolset.audio_data import AudioData
-from audio_toolset.processing.gain import normalize_to_target
 import numpy as np
 from pydantic import BaseModel, Field
+
+from audio_toolset.audio_data import AudioData
+from audio_toolset.plots import get_dynamics_plot
+from audio_toolset.processing.gain import normalize_to_target
+from audio_toolset.util import convert_db_to_factor, convert_linear_to_db
 
 LIMITER_RATIO = 100000
 LIMITER_ATTACK = 0.1
@@ -123,7 +124,7 @@ def apply_compressor(
             release_ms=release_ms,
         )
     except Exception as e:
-        raise DynamicsError(f"Gain computer model validation failed: {e}")
+        raise DynamicsError("Gain computer model validation failed") from e
 
     gain_reduction = gain_computer.get_gain_reduction()
     new_data = audio_data.get_copy()
@@ -162,7 +163,7 @@ def apply_limiter(
             release_ms=LIMITER_RELEASE,
         )
     except Exception as e:
-        raise DynamicsError(f"Gain computer model validation failed: {e}")
+        raise DynamicsError("Gain computer model validation failed") from e
 
     gain_reduction = gain_computer.get_gain_reduction()
     new_data = audio_data.get_copy()
