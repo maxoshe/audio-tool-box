@@ -8,12 +8,12 @@
 
 
 
-A Python library for **processing audio signals**.
+Python library and command line interface for **processing audio signals**. 
 
 `audio_toolset` provides an intuitive and flexible way to process audio files in Python. Each `Channel` object handles a single **mono audio file**, allowing you to apply filters, EQ, dynamic processing, gain adjustments, noise reduction, and more.
 
 > [!TIP]
-> **Stereo files** can be handled by first splitting them into mono channels using `split_to_mono` and then recombining them with `join_to_stereo`. [see example](#working-with-stereo-files)
+> **Stereo files** can be handled by first splitting them into mono channels using `split_to_mono` and then recombining them with `join_to_stereo`. [see example below](#working-with-stereo-files)
 
 ## Installation
 
@@ -30,7 +30,7 @@ from audio_toolset.channel import Channel
 
 track = Channel("my_audio.wav")
 
-track.lowpass(cutoff_frequency=12000)  # Remove harsh high frequencies
+track.lowpass(cutoff_frequency=12000)  # Remove harsh highs
 track.highpass(cutoff_frequency=80)  # Remove low-end rumble
 track.normalize(target_db=-1)  # Normalize
 
@@ -38,11 +38,24 @@ track.write("my_audio_processed.wav")
 
 ```
 
+### Command line interface
+
+All methods in `Channel` are exposed as subcommands in the `audio-toolset` CLI and can be chained in any order.
+this command will produce an identical result to the python script above
+```bash
+audio-toolset --source my_audio.wav \
+  lowpass --cutoff-frequency 12000 \
+  highpass --cutoff-frequency 80 \
+  normalize --target-db -1 \
+  write --output-path my_audio_processed.wav
+```
+
 ### Process multiple files
 This is very handy when you need to apply the same processing to multiple files, for example a directory with sound effects.
 
 ```python
 import pathlib
+
 from audio_toolset.channel import Channel
 
 input_dir = pathlib.Path("input_audio")
@@ -52,8 +65,7 @@ output_dir.mkdir(exist_ok=True)
 for wav_file in input_dir.glob("*.wav"):
     track = Channel(wav_file)
 
-    track.fade(fade_duration_ms=10)  # Remove start/end pops if present
-    track.lowpass(cutoff_frequency=12000)  # Remove harsh high frequencies
+    track.lowpass(cutoff_frequency=12000)  # Remove harsh highs
     track.highpass(cutoff_frequency=80)  # Remove low-end rumble
     track.normalize(target_db=-1)  # Normalize
 
