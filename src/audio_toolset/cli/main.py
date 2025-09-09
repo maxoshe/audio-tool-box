@@ -5,6 +5,7 @@ import click
 from audio_toolset.channel import Channel
 from audio_toolset.cli import decorators
 from audio_toolset.cli.structs import ContextObject
+from audio_toolset.cli.helpers import generate_command_help_from_method
 
 
 @click.group(chain=True)
@@ -26,7 +27,7 @@ def audio_toolset_cli(
     context.obj = ContextObject(channel=Channel(source), debug=debug)
 
 
-@audio_toolset_cli.command()
+@audio_toolset_cli.command(help=generate_command_help_from_method(Channel.write))
 @decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.write)
 def write(obj: ContextObject, **kwargs) -> None:
@@ -38,7 +39,7 @@ def write(obj: ContextObject, **kwargs) -> None:
         click.echo(f"write failed: {e}")
 
 
-@audio_toolset_cli.command()
+@audio_toolset_cli.command(help=generate_command_help_from_method(Channel.plot_signal))
 @decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.plot_signal)
 def plot_signal(obj: ContextObject, **kwargs) -> None:
@@ -50,7 +51,7 @@ def plot_signal(obj: ContextObject, **kwargs) -> None:
         click.echo(f"plot_signal failed: {e}")
 
 
-@audio_toolset_cli.command()
+@audio_toolset_cli.command(help=generate_command_help_from_method(Channel.gain))
 @decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.gain)
 def gain(obj: ContextObject, **kwargs) -> None:
@@ -62,7 +63,7 @@ def gain(obj: ContextObject, **kwargs) -> None:
         click.echo(f"gain failed: {e}")
 
 
-@audio_toolset_cli.command()
+@audio_toolset_cli.command(help=generate_command_help_from_method(Channel.normalize))
 @decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.normalize)
 def normalize(obj: ContextObject, **kwargs) -> None:
@@ -74,7 +75,7 @@ def normalize(obj: ContextObject, **kwargs) -> None:
         click.echo(f"normalize failed: {e}")
 
 
-@audio_toolset_cli.command()
+@audio_toolset_cli.command(help=generate_command_help_from_method(Channel.fade))
 @decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.fade)
 def fade(obj: ContextObject, **kwargs) -> None:
@@ -86,7 +87,7 @@ def fade(obj: ContextObject, **kwargs) -> None:
         click.echo(f"fade failed: {e}")
 
 
-@audio_toolset_cli.command()
+@audio_toolset_cli.command(help=generate_command_help_from_method(Channel.lowpass))
 @decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.lowpass)
 def lowpass(obj: ContextObject, **kwargs) -> None:
@@ -98,7 +99,7 @@ def lowpass(obj: ContextObject, **kwargs) -> None:
         click.echo(f"lowpass failed: {e}")
 
 
-@audio_toolset_cli.command()
+@audio_toolset_cli.command(help=generate_command_help_from_method(Channel.highpass))
 @decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.highpass)
 def highpass(obj: ContextObject, **kwargs) -> None:
@@ -110,7 +111,7 @@ def highpass(obj: ContextObject, **kwargs) -> None:
         click.echo(f"highpass failed: {e}")
 
 
-@audio_toolset_cli.command()
+@audio_toolset_cli.command(help=generate_command_help_from_method(Channel.eq_band))
 @decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.eq_band)
 def eq_band(obj: ContextObject, **kwargs) -> None:
@@ -122,7 +123,9 @@ def eq_band(obj: ContextObject, **kwargs) -> None:
         click.echo(f"eq_band failed: {e}")
 
 
-@audio_toolset_cli.command()
+@audio_toolset_cli.command(
+    help=generate_command_help_from_method(Channel.noise_reduction)
+)
 @decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.noise_reduction)
 def noise_reduction(obj: ContextObject, **kwargs) -> None:
@@ -134,7 +137,7 @@ def noise_reduction(obj: ContextObject, **kwargs) -> None:
         click.echo(f"noise_reduction failed: {e}")
 
 
-@audio_toolset_cli.command()
+@audio_toolset_cli.command(help=generate_command_help_from_method(Channel.compressor))
 @decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.compressor)
 def compressor(obj: ContextObject, **kwargs) -> None:
@@ -146,7 +149,7 @@ def compressor(obj: ContextObject, **kwargs) -> None:
         click.echo(f"compressor failed: {e}")
 
 
-@audio_toolset_cli.command()
+@audio_toolset_cli.command(help=generate_command_help_from_method(Channel.limiter))
 @decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.limiter)
 def limiter(obj: ContextObject, **kwargs) -> None:
@@ -158,7 +161,9 @@ def limiter(obj: ContextObject, **kwargs) -> None:
         click.echo(f"limiter failed: {e}")
 
 
-@audio_toolset_cli.command()
+@audio_toolset_cli.command(
+    help=generate_command_help_from_method(Channel.soft_clipping)
+)
 @decorators.pass_context_object
 @decorators.click_audio_toolset_options(Channel.soft_clipping)
 def soft_clipping(obj: ContextObject, **kwargs) -> None:

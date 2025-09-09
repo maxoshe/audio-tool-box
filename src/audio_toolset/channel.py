@@ -298,6 +298,9 @@ class Channel:
         """
         Apply soft clipping using a cubic non-linearity to prevent harsh distortion.
 
+        Args:
+            None
+
         Returns:
             Channel: Returns self for chaining.
         """
