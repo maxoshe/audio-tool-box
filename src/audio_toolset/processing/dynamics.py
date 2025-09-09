@@ -90,9 +90,9 @@ class GainComputer(BaseModel):
         smooth_gain_reduction = gain_reduction.copy()
         for n in range(1, len(gain_reduction)):
             alpha = (
-                alpha_attack
+                alpha_release
                 if gain_reduction[n] > smooth_gain_reduction[n - 1]
-                else alpha_release
+                else alpha_attack
             )
             smooth_gain_reduction[n] = self._apply_one_pole_filter_step(
                 smooth_gain_reduction[n - 1], gain_reduction[n], alpha
