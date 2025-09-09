@@ -4,8 +4,8 @@ import click
 
 from audio_toolset.channel import Channel
 from audio_toolset.cli import decorators
-from audio_toolset.cli.structs import ContextObject
 from audio_toolset.cli.helpers import generate_command_help_from_method
+from audio_toolset.cli.structs import ContextObject
 
 
 @click.group(chain=True)
