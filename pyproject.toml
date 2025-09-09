@@ -3,6 +3,7 @@ name = "audio-toolset"
 version = "0.1.1"
 description = "Tools for processing audio signals"
 readme = "README.md"
+license = "MIT"
 authors = [{ name = "moshe-stanylov", email = "maxoshe@gmail.com" }]
 requires-python = ">=3.10, <3.13"
 dependencies = [
@@ -12,6 +13,21 @@ dependencies = [
     "scipy==1.13.1",
     "soundfile==0.12.1",
 ]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Multimedia :: Sound/Audio"
+]
+
+[project.urls]
+Repository = "https://github.com/maxoshe/audio-toolset.git"
 
 [project.scripts]
 audio-toolset = "audio_toolset:main"
